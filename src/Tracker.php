@@ -29,11 +29,14 @@ class Tracker
      * @param $name
      * @param $arguments
      * @return string
+     * @throws Exception
      */
     public static function __callStatic($name, $arguments)
     {
         $trackGroupName = $arguments[0];
-        $providerNames = config('railanalytics.tracking-provider-groups.' . $trackGroupName);
+        $providerNames = config(
+            'railanalytics.' . env('APP_ENV') . '.tracking-provider-groups.' . $trackGroupName
+        );
 
         if (empty($providerNames) || !is_array($providerNames)) {
             throw new Exception(
@@ -52,7 +55,7 @@ class Tracker
         foreach ($providerNames as $providerName) {
             $provider = $factory->build($providerName);
 
-            if (!is_null($provider)) {
+            if (!is_null($provider) && method_exists($provider, $name)) {
                 $outputString .= call_user_func_array(
                     [$provider, $name],
                     array_slice($arguments, 1)

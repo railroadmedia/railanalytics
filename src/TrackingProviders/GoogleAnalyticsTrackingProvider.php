@@ -21,7 +21,9 @@ class GoogleAnalyticsTrackingProvider
 
     public static function getBodyBottomTrackingCode()
     {
-        $trackingId = config('railanalytics.providers.google-analytics.tracking-id');
+        $trackingId = config('railanalytics.' .
+                             env('APP_ENV') .
+                             '.providers.google-analytics.tracking-id');
 
         return
         "
@@ -32,8 +34,6 @@ class GoogleAnalyticsTrackingProvider
                 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
             
                 ga('create', '" . $trackingId . "', 'auto');
-                ga('require', 'ec');
-                
             </script>
         ";
     }
@@ -49,7 +49,6 @@ class GoogleAnalyticsTrackingProvider
         " .
         $otherTrackingOutput .
         "
-                ga('send', 'pageview');
             </script>
 
             <!-- ------------------ -->
