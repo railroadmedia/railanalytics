@@ -6,7 +6,24 @@ class GoogleAnalyticsTrackingProvider
 {
     public static function getHeadTopTrackingCode()
     {
+        $trackingId = config('railanalytics.' .
+                             env('APP_ENV') .
+                             '.providers.google-analytics.tracking-id');
 
+        return
+        "
+            <!-- Analytics Tracking -->
+            <script>
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            
+                ga('create', '" . $trackingId . "', 'auto');
+                ga('require', 'ec');
+            </script>
+            <!-- ------------------ -->
+        ";
     }
 
     public static function getHeadBottomTrackingCode()
@@ -21,21 +38,7 @@ class GoogleAnalyticsTrackingProvider
 
     public static function getBodyBottomTrackingCode()
     {
-        $trackingId = config('railanalytics.' .
-                             env('APP_ENV') .
-                             '.providers.google-analytics.tracking-id');
 
-        return
-        "
-            <script>
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-            
-                ga('create', '" . $trackingId . "', 'auto');
-            </script>
-        ";
     }
 
     public static function trackBase(callable $otherTracking)
@@ -49,6 +52,7 @@ class GoogleAnalyticsTrackingProvider
         " .
         $otherTrackingOutput .
         "
+                ga('send', 'pageview');
             </script>
 
             <!-- ------------------ -->
@@ -62,7 +66,16 @@ class GoogleAnalyticsTrackingProvider
         $value,
         $currency = 'USD'
     ) {
-
+        return
+        "
+            ga('ec:addImpression', {
+                'id': '" . $id . "',
+                'name': '" . $name . "',
+                'category': '" . $category . "',
+                'variant': 'price: " . $value . ":" . $currency . "',
+                'position': 1
+            });
+        ";
     }
 
     public static function trackProductDetailsImpression(
