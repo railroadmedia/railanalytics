@@ -1,0 +1,32 @@
+{
+  "name": "railroad/railanalytics",
+  "description": "Laravel analytics system for using tracking code in your application for google analytics/adwords, facebook pixel, etc.",
+  "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "Caleb Favor",
+      "email": "calebfavor@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "~7",
+    "laravel/framework": "5.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.7",
+    "phpunit/php-code-coverage": "4.0.5",
+    "orchestra/testbench": "3.4.x@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "Railroad\\Railanalytics\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  }
+}
