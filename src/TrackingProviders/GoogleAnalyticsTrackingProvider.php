@@ -23,7 +23,7 @@ class GoogleAnalyticsTrackingProvider
     {
         $trackingId = config('railanalytics.providers.google-analytics.tracking-id');
 
-        echo
+        return
         "
             <script>
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -32,23 +32,36 @@ class GoogleAnalyticsTrackingProvider
                 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
             
                 ga('create', '" . $trackingId . "', 'auto');
-                ga('send', 'pageview');
+                ga('require', 'ec');
+                
             </script>
         ";
     }
 
-    public static function trackBase($trackGroupName)
+    public static function trackBase(callable $otherTracking)
     {
+        $otherTrackingOutput = $otherTracking();
 
+        return
+        "
+            <!-- Analytics Tracking -->
+            <script>
+        " .
+        $otherTrackingOutput .
+        "
+                ga('send', 'pageview');
+            </script>
+
+            <!-- ------------------ -->
+        ";
     }
 
     public static function trackProductImpression(
-        $trackGroupName,
         $id,
         $name,
         $category,
         $value,
-        $currency = null
+        $currency = 'USD'
     ) {
 
     }
@@ -59,7 +72,7 @@ class GoogleAnalyticsTrackingProvider
         $name,
         $category,
         $value,
-        $currency = null
+        $currency = 'USD'
     ) {
 
     }
@@ -71,7 +84,7 @@ class GoogleAnalyticsTrackingProvider
         $category,
         $value,
         $quantity,
-        $currency = null
+        $currency = 'USD'
     ) {
 
     }
