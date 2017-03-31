@@ -6,12 +6,14 @@ class GoogleAnalyticsTrackingProvider
 {
     public static function getHeadTopTrackingCode()
     {
-        $trackingId = config('railanalytics.' .
-                             env('APP_ENV') .
-                             '.providers.google-analytics.tracking-id');
+        $trackingId = config(
+            'railanalytics.' .
+            env('APP_ENV') .
+            '.providers.google-analytics.tracking-id'
+        );
 
         return
-        "
+            "
             <!-- Analytics Tracking -->
             <script>
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -46,12 +48,12 @@ class GoogleAnalyticsTrackingProvider
         $otherTrackingOutput = $otherTracking();
 
         return
-        "
+            "
             <!-- Analytics Tracking -->
             <script>
         " .
-        $otherTrackingOutput .
-        "
+            $otherTrackingOutput .
+            "
                 ga('send', 'pageview');
             </script>
 
@@ -66,7 +68,7 @@ class GoogleAnalyticsTrackingProvider
         $currency = 'USD'
     ) {
         return
-        "
+            "
             ga('ec:addImpression', {
                 'id': '" . $id . "',
                 'name': '" . $name . "',
@@ -76,6 +78,13 @@ class GoogleAnalyticsTrackingProvider
         ";
     }
 
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param $value
+     * @param string $currency
+     */
     public static function trackProductDetailsImpression(
         $id,
         $name,
@@ -86,6 +95,15 @@ class GoogleAnalyticsTrackingProvider
 
     }
 
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param $value
+     * @param $quantity
+     * @param string $currency
+     * @return string
+     */
     public static function trackAddToCart(
         $id,
         $name,
@@ -96,22 +114,53 @@ class GoogleAnalyticsTrackingProvider
     ) {
 
         return
-        "
-            ga('ec:addProduct', {
-                'id': '" . $id . "',
-                'name': '" . $name . "',
-                'category': '" . $category . "',
-                'price': '" . $value . "',
-                'quantity': " . $quantity . "
-            });
-            ga('ec:setAction', 'add');
-            ga('send', 'event', 'UX', 'click', 'add to cart');
-        ";
+            "
+                ga('ec:addProduct', {
+                    'id': '" . $id . "',
+                    'name': '" . $name . "',
+                    'category': '" . $category . "',
+                    'price': '" . $value . "',
+                    'quantity': " . $quantity . "
+                });
+                ga('ec:setAction', 'add');
+                ga('send', 'event', 'UX', 'click', 'add to cart');
+            ";
     }
 
-    public static function trackInitiateCheckout()
-    {
+    /**
+     * @param array $products
+     * @param int $step
+     * @param string $currency
+     * @return string
+     */
+    public static function trackInitiateCheckout(
+        array $products,
+        $step,
+        $currency = 'USD'
+    ) {
+        $output = "";
 
+        foreach ($products as $product) {
+            $output .=
+                "
+                    ga('ec:addProduct', {
+                        'id': '" . $product['id'] . "',
+                        'name': '" . $product['name'] . "',
+                        'category': '" . $product['category'] . "',
+                        'price': '" . $product['value'] . "',
+                        'quantity': " . $product['quantity'] . "
+                    });
+                ";
+        }
+
+        $output .=
+            "
+                ga('ec:setAction','checkout', {
+                    'step': " . $step . "
+                });
+            ";
+
+        return $output;
     }
 
     public static function trackAddPaymentInformation()
