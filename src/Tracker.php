@@ -18,13 +18,41 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string trackProductImpression($trackGroupName, $id, $name, $category, $value, $currency = null)
  * @method static string trackProductDetailsImpression($trackGroupName, $id, $name, $category, $value, $currency = null)
  * @method static string trackAddToCart($trackGroupName, $id, $name, $category, $value, $quantity, $currency = null)
- * @method static string trackInitiateCheckout()
- * @method static string trackAddPaymentInformation()
- * @method static string trackTransaction()
- * @method static string trackRegistration()
+ * @method static string trackInitiateCheckout($trackGroupName)
+ * @method static string trackAddPaymentInformation($trackGroupName)
+ * @method static string trackTransaction($trackGroupName)
+ * @method static string trackRegistration($trackGroupName)
  */
 class Tracker
 {
+    const SESSION_KEY = 'railroad.tracker.queue.';
+
+    /**
+     * @param $trackGroupName
+     * @param callable $function
+     */
+    public static function queue($trackGroupName, callable $function)
+    {
+        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
+
+        $sessionQueueString .= $function();
+
+        session(['railroad.tracker.queue.' . $trackGroupName => $sessionQueueString]);
+    }
+
+    /**
+     * @param $trackGroupName
+     * @return string
+     */
+    public static function trackAndClearQueue($trackGroupName)
+    {
+        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
+
+        session(['railroad.tracker.queue.' . $trackGroupName => '']);
+
+        return $sessionQueueString;
+    }
+
     /**
      * @param $name
      * @param $arguments
