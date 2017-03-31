@@ -77,7 +77,6 @@ class GoogleAnalyticsTrackingProvider
     }
 
     public static function trackProductDetailsImpression(
-        $trackGroupName,
         $id,
         $name,
         $category,
@@ -88,7 +87,6 @@ class GoogleAnalyticsTrackingProvider
     }
 
     public static function trackAddToCart(
-        $trackGroupName,
         $id,
         $name,
         $category,
@@ -97,6 +95,18 @@ class GoogleAnalyticsTrackingProvider
         $currency = 'USD'
     ) {
 
+        return
+        "
+            ga('ec:addProduct', {
+                'id': '" . $id . "',
+                'name': '" . $name . "',
+                'category': '" . $category . "',
+                'price': '" . $value . "',
+                'quantity': " . $quantity . "
+            });
+            ga('ec:setAction', 'add');
+            ga('send', 'event', 'UX', 'click', 'add to cart');
+        ";
     }
 
     public static function trackInitiateCheckout()
