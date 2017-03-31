@@ -15,7 +15,7 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string getBodyTopTrackingCode($trackGroupName)
  * @method static string getBodyBottomTrackingCode($trackGroupName)
  * @method static string trackBase($trackGroupName, callable $otherTracking)
- * @method static string trackProductImpression($trackGroupName, $id, $name, $category, $value, $currency = null)
+ * @method static string trackProductImpression($trackGroupName, $id, $name, $category, $currency = null)
  * @method static string trackProductDetailsImpression($trackGroupName, $id, $name, $category, $value, $currency = null)
  * @method static string trackAddToCart($trackGroupName, $id, $name, $category, $value, $quantity, $currency = null)
  * @method static string trackInitiateCheckout($trackGroupName)

@@ -63,7 +63,6 @@ class GoogleAnalyticsTrackingProvider
         $id,
         $name,
         $category,
-        $value,
         $currency = 'USD'
     ) {
         return
@@ -72,7 +71,6 @@ class GoogleAnalyticsTrackingProvider
                 'id': '" . $id . "',
                 'name': '" . $name . "',
                 'category': '" . $category . "',
-                'variant': 'price: " . $value . ":" . $currency . "',
                 'position': 1
             });
         ";
