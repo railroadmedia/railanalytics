@@ -14,18 +14,18 @@ class GoogleAnalyticsTrackingProvider
 
         return
             "
-            <!-- Analytics Tracking -->
-            <script>
-                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-            
-                ga('create', '" . $trackingId . "', 'auto');
-                ga('require', 'ec');
-            </script>
-            <!-- ------------------ -->
-        ";
+                <!-- Analytics Tracking -->
+                <script>
+                    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+                    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+                
+                    ga('create', '" . $trackingId . "', 'auto');
+                    ga('require', 'ec');
+                </script>
+                <!-- ------------------ -->
+            ";
     }
 
     public static function getHeadBottomTrackingCode()
@@ -49,16 +49,16 @@ class GoogleAnalyticsTrackingProvider
 
         return
             "
-            <!-- Analytics Tracking -->
-            <script>
-        " .
-            $otherTrackingOutput .
-            "
-                ga('send', 'pageview');
-            </script>
-
-            <!-- ------------------ -->
-        ";
+                <!-- Analytics Tracking -->
+                <script>
+            " .
+                $otherTrackingOutput .
+                "
+                    ga('send', 'pageview');
+                </script>
+    
+                <!-- ------------------ -->
+            ";
     }
 
     public static function trackProductImpression(
@@ -69,13 +69,13 @@ class GoogleAnalyticsTrackingProvider
     ) {
         return
             "
-            ga('ec:addImpression', {
-                'id': '" . $id . "',
-                'name': '" . $name . "',
-                'category': '" . $category . "',
-                'position': 1
-            });
-        ";
+                ga('ec:addImpression', {
+                    'id': '" . $id . "',
+                    'name': '" . $name . "',
+                    'category': '" . $category . "',
+                    'position': 1
+                });
+            ";
     }
 
     /**
@@ -84,6 +84,7 @@ class GoogleAnalyticsTrackingProvider
      * @param $category
      * @param $value
      * @param string $currency
+     * @return string
      */
     public static function trackProductDetailsImpression(
         $id,
@@ -93,6 +94,16 @@ class GoogleAnalyticsTrackingProvider
         $currency = 'USD'
     ) {
 
+        return
+            "
+               ga('ec:addProduct', {
+                   'id': '" . $id . "',
+                   'name': '" . $name . "',
+                   'category': '" . $category . "'
+               });
+               
+               ga('ec:setAction', 'detail');
+        ";
     }
 
     /**
@@ -123,7 +134,6 @@ class GoogleAnalyticsTrackingProvider
                     'quantity': " . $quantity . "
                 });
                 ga('ec:setAction', 'add');
-                ga('send', 'event', 'UX', 'click', 'add to cart');
             ";
     }
 
