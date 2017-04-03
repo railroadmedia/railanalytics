@@ -52,8 +52,8 @@ class GoogleAnalyticsTrackingProvider
                 <!-- Analytics Tracking -->
                 <script>
             " .
-                $otherTrackingOutput .
-                "
+            $otherTrackingOutput .
+            "
                     ga('send', 'pageview');
                 </script>
     
@@ -146,6 +146,7 @@ class GoogleAnalyticsTrackingProvider
     public static function trackInitiateCheckout(
         array $products,
         $step,
+        $value,
         $currency = 'USD'
     ) {
         $output = "";
@@ -173,14 +174,51 @@ class GoogleAnalyticsTrackingProvider
         return $output;
     }
 
-    public static function trackAddPaymentInformation()
+    public static function trackAddPaymentInformation($step, $value, $shippingOption)
     {
-
+        return
+            "
+                ga('ec:setAction', 'checkout_option', {
+                    'step': " . $step . ",
+                    'option': '" . $shippingOption . "'
+                });
+            ";
     }
 
-    public static function trackTransaction()
-    {
+    public static function trackTransaction(
+        array $products,
+        $transactionId,
+        $revenue,
+        $tax,
+        $shipping,
+        $currency = 'USD'
+    ) {
+        $output = "";
 
+        foreach ($products as $product) {
+            $output .=
+                "
+                    ga('ec:addProduct', {
+                        'id': '" . $product['id'] . "',
+                        'name': '" . $product['name'] . "',
+                        'category': '" . $product['category'] . "',
+                        'price': '" . $product['value'] . "',
+                        'quantity': " . $product['quantity'] . "
+                    });
+                ";
+        }
+
+        $output .=
+            "
+                ga('ec:setAction','purchase', {
+                    'id': '" . $transactionId . "',
+                    'revenue': '" . $revenue . "',
+                    'tax': '" . $tax . "',
+                    'shipping': '" . $shipping . "'
+                });
+            ";
+
+        return $output;
     }
 
     public static function trackRegistration()

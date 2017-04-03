@@ -20,7 +20,7 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string trackAddToCart($trackGroupName, $id, $name, $category, $value, $quantity, $currency = null)
  * @method static string trackInitiateCheckout($trackGroupName, array $products, $step, $currency = 'USD')
  * @method static string trackAddPaymentInformation($trackGroupName)
- * @method static string trackTransaction($trackGroupName)
+ * @method static string trackTransaction(array $products, $transactionId, $revenue, $tax, $shipping, $currency = 'USD')
  * @method static string trackRegistration($trackGroupName)
  */
 class Tracker
