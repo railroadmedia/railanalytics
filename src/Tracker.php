@@ -10,48 +10,49 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  *
  * @package Railroad\Railanalytics
  *
- * @method static string getHeadTopTrackingCode($trackGroupName)
- * @method static string getHeadBottomTrackingCode($trackGroupName)
- * @method static string getBodyTopTrackingCode($trackGroupName)
- * @method static string getBodyBottomTrackingCode($trackGroupName)
- * @method static string trackBase($trackGroupName, callable $otherTracking)
- * @method static string trackProductImpression($trackGroupName, $id, $name, $category, $currency = null)
- * @method static string trackProductDetailsImpression($trackGroupName, $id, $name, $category, $value, $currency = null)
- * @method static string trackAddToCart($trackGroupName, $id, $name, $category, $value, $quantity, $currency = null)
- * @method static string trackInitiateCheckout($trackGroupName, array $products, $step, $currency = 'USD')
- * @method static string trackAddPaymentInformation($trackGroupName)
+ * @method static string headTop()
+ * @method static string headBottom()
+ * @method static string bodyTop()
+ * @method static string bodyBottom()
+ *
+ * @method static string trackPageView()
+ * @method static string trackProductImpression($id, $name, $category, $currency = null)
+ * @method static string trackProductDetailsImpression($id, $name, $category, $value, $currency = null)
+ * @method static string trackAddToCart($id, $name, $category, $value, $quantity, $currency = null)
+ * @method static string trackInitiateCheckout(array $products, $step, $currency = 'USD')
+ * @method static string trackAddPaymentInformation()
  * @method static string trackTransaction(array $products, $transactionId, $revenue, $tax, $shipping, $currency = 'USD')
- * @method static string trackRegistration($trackGroupName)
+ * @method static string trackRegistration()
  */
 class Tracker
 {
-    const SESSION_KEY = 'railroad.tracker.queue.';
-
-    /**
-     * @param $trackGroupName
-     * @param callable $function
-     */
-    public static function queue($trackGroupName, callable $function)
-    {
-        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
-
-        $sessionQueueString .= $function();
-
-        session(['railroad.tracker.queue.' . $trackGroupName => $sessionQueueString]);
-    }
-
-    /**
-     * @param $trackGroupName
-     * @return string
-     */
-    public static function trackAndClearQueue($trackGroupName)
-    {
-        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
-
-        session(['railroad.tracker.queue.' . $trackGroupName => '']);
-
-        return $sessionQueueString;
-    }
+//    const SESSION_KEY = 'railroad.tracker.queue.';
+//
+//    /**
+//     * @param $trackGroupName
+//     * @param callable $function
+//     */
+//    public static function queue($trackGroupName, callable $function)
+//    {
+//        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
+//
+//        $sessionQueueString .= $function();
+//
+//        session(['railroad.tracker.queue.' . $trackGroupName => $sessionQueueString]);
+//    }
+//
+//    /**
+//     * @param $trackGroupName
+//     * @return string
+//     */
+//    public static function trackAndClearQueue($trackGroupName)
+//    {
+//        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
+//
+//        session(['railroad.tracker.queue.' . $trackGroupName => '']);
+//
+//        return $sessionQueueString;
+//    }
 
     /**
      * @param $name
@@ -61,9 +62,8 @@ class Tracker
      */
     public static function __callStatic($name, $arguments)
     {
-        $trackGroupName = $arguments[0];
         $providerNames = config(
-            'railanalytics.' . env('APP_ENV') . '.tracking-provider-groups.' . $trackGroupName
+            'railanalytics.' . env('APP_ENV') . '.active-tracking-providers'
         );
 
         if (empty($providerNames) || !is_array($providerNames)) {
@@ -86,7 +86,7 @@ class Tracker
             if (!is_null($provider) && method_exists($provider, $name)) {
                 $outputString .= call_user_func_array(
                     [$provider, $name],
-                    array_slice($arguments, 1)
+                    $arguments
                 );
             }
         }

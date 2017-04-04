@@ -17,6 +17,9 @@ class TrackingProviderFactory
             case 'google-tag-manager':
             case 'gtm':
                 return app(GoogleTagManagerTrackingProvider::class);
+            case 'google-adwords':
+            case 'gaw':
+                return app(GoogleAdWordsTrackingProvider::class);
             default:
                 return null;
         }

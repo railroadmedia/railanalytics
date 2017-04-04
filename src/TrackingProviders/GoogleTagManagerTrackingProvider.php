@@ -4,7 +4,12 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleTagManagerTrackingProvider
 {
-    public static function getHeadTopTrackingCode()
+    const NAME = 'google-tag-manager';
+
+    protected static $headTop = '';
+    protected static $bodyTop = '';
+
+    public static function headTop()
     {
         $trackingId = config(
             'railanalytics.' .
@@ -21,10 +26,11 @@ class GoogleTagManagerTrackingProvider
             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','" . $trackingId . "');</script>
             <!-- End Google Tag Manager -->
-        ";
+        "
+            . self::$headTop;
     }
 
-    public static function getBodyTopTrackingCode()
+    public static function bodyTop()
     {
         $trackingId = config(
             'railanalytics.' .
@@ -38,6 +44,7 @@ class GoogleTagManagerTrackingProvider
             <noscript><iframe src='https://www.googletagmanager.com/ns.html?id=" . $trackingId . "'
             height='0' width='0' style='display:none;visibility:hidden'></iframe></noscript>
             <!-- End Google Tag Manager (noscript) -->
-        ";
+        "
+            . self::$bodyTop;
     }
 }

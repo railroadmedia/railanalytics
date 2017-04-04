@@ -4,7 +4,22 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleAnalyticsTrackingProvider
 {
-    public static function getHeadTopTrackingCode()
+    const NAME = 'google-analytics';
+
+    protected static $headTop = '';
+    protected static $headBottom = '';
+
+    public static function queue(callable $function)
+    {
+        $a = session('test123');
+
+        session('test123', ['test312' => $function]);
+    }
+
+    /**
+     * @return string
+     */
+    public static function headTop()
     {
         $trackingId = config(
             'railanalytics.' .
@@ -25,56 +40,46 @@ class GoogleAnalyticsTrackingProvider
                     ga('require', 'ec');
                 </script>
                 <!-- ------------------ -->
-            ";
+            "
+            . self::$headTop;
     }
 
-    public static function getHeadBottomTrackingCode()
+    /**
+     * @return string
+     */
+    public static function headBottom()
     {
-
-    }
-
-    public static function getBodyTopTrackingCode()
-    {
-
-    }
-
-    public static function getBodyBottomTrackingCode()
-    {
-
-    }
-
-    public static function trackBase(callable $otherTracking)
-    {
-        $otherTrackingOutput = $otherTracking();
-
         return
+            self::$headBottom .
             "
-                <!-- Analytics Tracking -->
                 <script>
-            " .
-            $otherTrackingOutput .
-            "
                     ga('send', 'pageview');
                 </script>
-    
-                <!-- ------------------ -->
             ";
     }
 
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param string $currency
+     */
     public static function trackProductImpression(
         $id,
         $name,
         $category,
         $currency = 'USD'
     ) {
-        return
-            "
-                ga('ec:addImpression', {
-                    'id': '" . $id . "',
-                    'name': '" . $name . "',
-                    'category': '" . $category . "',
-                    'position': 1
-                });
+        self::$headBottom .=
+            "    
+                <script>
+                    ga('ec:addImpression', {
+                        'id': '" . $id . "',
+                        'name': '" . $name . "',
+                        'category': '" . $category . "',
+                        'position': 1
+                    });
+                </script>
             ";
     }
 
@@ -84,7 +89,6 @@ class GoogleAnalyticsTrackingProvider
      * @param $category
      * @param $value
      * @param string $currency
-     * @return string
      */
     public static function trackProductDetailsImpression(
         $id,
@@ -94,15 +98,17 @@ class GoogleAnalyticsTrackingProvider
         $currency = 'USD'
     ) {
 
-        return
+        self::$headBottom .=
             "
-               ga('ec:addProduct', {
-                   'id': '" . $id . "',
-                   'name': '" . $name . "',
-                   'category': '" . $category . "'
-               });
-               
-               ga('ec:setAction', 'detail');
+                <script>
+                    ga('ec:addProduct', {
+                        'id': '" . $id . "',
+                        'name': '" . $name . "',
+                        'category': '" . $category . "'
+                    });
+                    
+                    ga('ec:setAction', 'detail');
+                </script>
         ";
     }
 
@@ -113,7 +119,6 @@ class GoogleAnalyticsTrackingProvider
      * @param $value
      * @param $quantity
      * @param string $currency
-     * @return string
      */
     public static function trackAddToCart(
         $id,
@@ -124,16 +129,18 @@ class GoogleAnalyticsTrackingProvider
         $currency = 'USD'
     ) {
 
-        return
+        self::$headBottom .=
             "
-                ga('ec:addProduct', {
-                    'id': '" . $id . "',
-                    'name': '" . $name . "',
-                    'category': '" . $category . "',
-                    'price': '" . $value . "',
-                    'quantity': " . $quantity . "
-                });
-                ga('ec:setAction', 'add');
+                <script>
+                    ga('ec:addProduct', {
+                        'id': '" . $id . "',
+                        'name': '" . $name . "',
+                        'category': '" . $category . "',
+                        'price': '" . $value . "',
+                        'quantity': " . $quantity . "
+                    });
+                    ga('ec:setAction', 'add');
+                </script>
             ";
     }
 
@@ -141,7 +148,6 @@ class GoogleAnalyticsTrackingProvider
      * @param array $products
      * @param int $step
      * @param string $currency
-     * @return string
      */
     public static function trackInitiateCheckout(
         array $products,
@@ -149,7 +155,10 @@ class GoogleAnalyticsTrackingProvider
         $value,
         $currency = 'USD'
     ) {
-        $output = "";
+        $output =
+            "
+                <script>
+            ";
 
         foreach ($products as $product) {
             $output .=
@@ -171,20 +180,40 @@ class GoogleAnalyticsTrackingProvider
                 });
             ";
 
-        return $output;
+        $output .=
+            "
+                </script>
+            ";
+
+        self::$headBottom .= $output;
     }
 
+    /**
+     * @param $step
+     * @param $value
+     * @param $shippingOption
+     */
     public static function trackAddPaymentInformation($step, $value, $shippingOption)
     {
-        return
+        self::$headBottom .=
             "
-                ga('ec:setAction', 'checkout_option', {
-                    'step': " . $step . ",
-                    'option': '" . $shippingOption . "'
-                });
+                <script>
+                    ga('ec:setAction', 'checkout_option', {
+                        'step': " . $step . ",
+                        'option': '" . $shippingOption . "'
+                    });
+                </script>
             ";
     }
 
+    /**
+     * @param array $products
+     * @param $transactionId
+     * @param $revenue
+     * @param $tax
+     * @param $shipping
+     * @param string $currency
+     */
     public static function trackTransaction(
         array $products,
         $transactionId,
@@ -193,7 +222,10 @@ class GoogleAnalyticsTrackingProvider
         $shipping,
         $currency = 'USD'
     ) {
-        $output = "";
+        $output =
+            "
+                <script>
+            ";
 
         foreach ($products as $product) {
             $output .=
@@ -218,11 +250,11 @@ class GoogleAnalyticsTrackingProvider
                 });
             ";
 
-        return $output;
-    }
+        $output .=
+            "
+                </script>
+            ";
 
-    public static function trackRegistration()
-    {
-
+        self::$headBottom .= $output;
     }
 }
