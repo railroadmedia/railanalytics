@@ -26,33 +26,43 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  */
 class Tracker
 {
-//    const SESSION_KEY = 'railroad.tracker.queue.';
-//
-//    /**
-//     * @param $trackGroupName
-//     * @param callable $function
-//     */
-//    public static function queue($trackGroupName, callable $function)
-//    {
-//        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
-//
-//        $sessionQueueString .= $function();
-//
-//        session(['railroad.tracker.queue.' . $trackGroupName => $sessionQueueString]);
-//    }
-//
-//    /**
-//     * @param $trackGroupName
-//     * @return string
-//     */
-//    public static function trackAndClearQueue($trackGroupName)
-//    {
-//        $sessionQueueString = session('railroad.tracker.queue.' . $trackGroupName, '');
-//
-//        session(['railroad.tracker.queue.' . $trackGroupName => '']);
-//
-//        return $sessionQueueString;
-//    }
+    /**
+     * @param callable $function
+     * @throws Exception
+     * @internal param $trackGroupName
+     */
+    public static function queue(callable $function)
+    {
+        $providerNames = config(
+            'railanalytics.' . env('APP_ENV') . '.active-tracking-providers'
+        );
+
+        if (empty($providerNames) || !is_array($providerNames)) {
+            throw new Exception(
+                'Railanalytics is not configured properly, ' .
+                'you must set a tracking provider group name.'
+            );
+        }
+
+        $function();
+
+        /**
+         * @var $factory TrackingProviderFactory
+         */
+        $factory = app(TrackingProviderFactory::class);
+
+        $outputString = '';
+
+        foreach ($providerNames as $providerName) {
+            $provider = $factory->build($providerName);
+
+            if (!is_null($provider) && method_exists($provider, 'queue')) {
+                $outputString .= call_user_func(
+                    [$provider, 'queue']
+                );
+            }
+        }
+    }
 
     /**
      * @param $name

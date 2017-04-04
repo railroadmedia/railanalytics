@@ -4,16 +4,19 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleAnalyticsTrackingProvider
 {
-    const NAME = 'google-analytics';
+    const SESSION_PREFIX = 'railanalytics.google-analytics';
 
     protected static $headTop = '';
     protected static $headBottom = '';
 
-    public static function queue(callable $function)
+    public static function queue()
     {
-        $a = session('test123');
-
-        session('test123', ['test312' => $function]);
+        session(
+            [
+                self::SESSION_PREFIX . 'headTop' => self::$headTop,
+                self::SESSION_PREFIX . 'headBottom' => self::$headBottom
+            ]
+        );
     }
 
     /**
@@ -21,6 +24,10 @@ class GoogleAnalyticsTrackingProvider
      */
     public static function headTop()
     {
+        self::$headTop = session(self::SESSION_PREFIX . 'headTop', '');
+
+        session([self::SESSION_PREFIX . 'headTop' => self::$headTop]);
+
         $trackingId = config(
             'railanalytics.' .
             env('APP_ENV') .
@@ -49,6 +56,10 @@ class GoogleAnalyticsTrackingProvider
      */
     public static function headBottom()
     {
+        self::$headBottom = session(self::SESSION_PREFIX . 'headBottom', '');
+
+        session([self::SESSION_PREFIX . 'headBottom' => '']);
+
         return
             self::$headBottom .
             "
