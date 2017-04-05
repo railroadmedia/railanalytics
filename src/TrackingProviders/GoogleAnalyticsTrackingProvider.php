@@ -24,7 +24,7 @@ class GoogleAnalyticsTrackingProvider
      */
     public static function headTop()
     {
-        self::$headTop = session(self::SESSION_PREFIX . 'headTop', '');
+        self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
 
         session([self::SESSION_PREFIX . 'headTop' => '']);
 
@@ -56,7 +56,7 @@ class GoogleAnalyticsTrackingProvider
      */
     public static function headBottom()
     {
-        self::$headBottom = session(self::SESSION_PREFIX . 'headBottom', '');
+        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
 
         session([self::SESSION_PREFIX . 'headBottom' => '']);
 

@@ -20,6 +20,9 @@ class TrackingProviderFactory
             case 'google-adwords':
             case 'gaw':
                 return app(GoogleAdWordsTrackingProvider::class);
+            case 'facebook-pixel':
+            case 'fp':
+                return app(FacebookPixelTrackingProvider::class);
             default:
                 return null;
         }

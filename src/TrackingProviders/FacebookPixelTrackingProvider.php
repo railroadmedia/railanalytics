@@ -6,18 +6,20 @@ class FacebookPixelTrackingProvider
 {
     const SESSION_PREFIX = 'railanalytics.facebook-pixel';
 
-    protected static $bodyBottom = '';
+    protected static $headBottom = '';
+    protected static $bodyTop = '';
 
     public static function queue()
     {
-        session([self::SESSION_PREFIX . 'bodyBottom' => self::$bodyBottom]);
+        session([self::SESSION_PREFIX . 'headBottom' => self::$headBottom]);
+        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
     }
 
     public static function headBottom()
     {
-        self::$bodyBottom = session(self::SESSION_PREFIX . 'bodyBottom', '');
+        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
 
-        session([self::SESSION_PREFIX . 'bodyBottom' => '']);
+        session([self::SESSION_PREFIX . 'headBottom' => '']);
 
         $pixelId = config(
             'railanalytics.' .
@@ -26,7 +28,7 @@ class FacebookPixelTrackingProvider
         );
 
         return
-        "
+            "
             <!-- Facebook Pixel Code -->
             <script>
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -42,11 +44,162 @@ class FacebookPixelTrackingProvider
             /></noscript>
             <!-- DO NOT MODIFY -->
             <!-- End Facebook Pixel Code -->
+        "
+            . self::$headBottom;
+    }
+
+    public static function bodyTop()
+    {
+        self::$bodyTop .= session(self::SESSION_PREFIX . 'bodyTop', '');
+
+        session([self::SESSION_PREFIX . 'bodyTop' => '']);
+
+        return self::$bodyTop;
+    }
+
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param string $currency
+     */
+    public static function trackProductImpression(
+        $id,
+        $name,
+        $category,
+        $currency = 'USD'
+    ) {
+        self::$bodyTop .=
+            "    
+                <script>
+                    fbq('track', 'ViewContent', {
+                        content_ids: ['" . $id . "'],
+                        content_type: 'product'
+                    });
+                </script>
+            ";
+    }
+
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param $value
+     * @param string $currency
+     */
+    public static function trackProductDetailsImpression(
+        $id,
+        $name,
+        $category,
+        $value,
+        $currency = 'USD'
+    ) {
+
+        self::$bodyTop .=
+            "
+                <script>
+                    fbq('track', 'ViewContent', {
+                        content_ids: ['" . $id . "'],
+                        content_type: 'product'
+                        value: " . number_format($value, 2, '.', '') . ",
+                        currency: '" . $currency . "'
+                    });
+                </script>
         ";
     }
 
-    public static function trackRegistration()
-    {
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param $value
+     * @param $quantity
+     * @param string $currency
+     */
+    public static function trackAddToCart(
+        $id,
+        $name,
+        $category,
+        $value,
+        $quantity,
+        $currency = 'USD'
+    ) {
 
+        self::$bodyTop .=
+            "
+                <script>
+                    fbq('track', 'AddToCart', {
+                        content_ids: ['" . $id . "'],
+                        content_type: 'product',
+                        value: " . number_format($value, 2, '.', '') . ",
+                        currency: '" . $currency . "'
+                    });
+                </script>
+
+            ";
+    }
+
+    /**
+     * @param array $products
+     * @param int $step
+     * @param string $currency
+     */
+    public static function trackInitiateCheckout(
+        array $products,
+        $step,
+        $value,
+        $currency = 'USD'
+    ) {
+        self::$bodyTop .=
+            "
+                <script>
+                    fbq('track', 'InitiateCheckout');
+                </script>
+            ";
+    }
+
+    /**
+     * @param $step
+     * @param $value
+     * @param $shippingOption
+     */
+    public static function trackAddPaymentInformation($step, $value, $shippingOption)
+    {
+        self::$bodyTop .=
+            "
+                <script>
+                    fbq('track', 'AddPaymentInfo');
+                </script>
+            ";
+    }
+
+    /**
+     * @param array $products
+     * @param $transactionId
+     * @param $revenue
+     * @param $tax
+     * @param $shipping
+     * @param string $currency
+     */
+    public static function trackTransaction(
+        array $products,
+        $transactionId,
+        $revenue,
+        $tax,
+        $shipping,
+        $currency = 'USD'
+    ) {
+        self::$bodyTop .=
+            "
+                <script>
+                    fbq('track', 'Purchase', {
+                        content_ids: ['"
+                            . implode("', '", array_column($products, 'id')) . "'],
+                        content_type: 'product',
+                        value: " . number_format($revenue, 2, '.', '') . ",
+                        currency: '" . $currency . "'
+                    });
+                </script>
+            ";
     }
 }
