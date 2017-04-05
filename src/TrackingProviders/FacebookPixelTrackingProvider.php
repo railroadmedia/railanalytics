@@ -2,11 +2,27 @@
 
 namespace Railroad\Railanalytics\TrackingProviders;
 
-class FacebookPixelTrackingProvider extends TrackingProviderBase
+class FacebookPixelTrackingProvider
 {
     const NAME = 'facebook-pixel';
 
-    public static function getHeadBottomTrackingCode()
+    protected static $bodyBottom = '';
+
+    public static function queue()
+    {
+        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
+    }
+
+    public static function bodyTop()
+    {
+        self::$bodyTop = session(self::SESSION_PREFIX . 'bodyTop', '');
+
+        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
+
+        return self::$bodyTop;
+    }
+
+    public static function headBottom()
     {
         $pixelId = config(
             'railanalytics.' .
@@ -32,24 +48,6 @@ class FacebookPixelTrackingProvider extends TrackingProviderBase
             <!-- DO NOT MODIFY -->
             <!-- End Facebook Pixel Code -->
         ";
-    }
-
-    public static function trackBase(callable $otherTracking)
-    {
-        $otherTrackingOutput = $otherTracking();
-
-        return
-            "
-                <!-- Analytics Tracking -->
-                <script>
-            " .
-            $otherTrackingOutput .
-            "
-                    ga('send', 'pageview');
-                </script>
-    
-                <!-- ------------------ -->
-            ";
     }
 
     public static function trackRegistration()

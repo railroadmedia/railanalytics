@@ -4,8 +4,6 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleTagManagerTrackingProvider
 {
-    const NAME = 'google-tag-manager';
-
     protected static $headTop = '';
     protected static $bodyTop = '';
 
