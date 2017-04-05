@@ -17,7 +17,7 @@ class GoogleAdWordsTrackingProvider
     {
         self::$bodyTop = session(self::SESSION_PREFIX . 'bodyTop', '');
 
-        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
+        session([self::SESSION_PREFIX . 'bodyTop' => '']);
 
         return self::$bodyTop;
     }

@@ -4,26 +4,21 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class FacebookPixelTrackingProvider
 {
-    const NAME = 'facebook-pixel';
+    const SESSION_PREFIX = 'railanalytics.facebook-pixel';
 
     protected static $bodyBottom = '';
 
     public static function queue()
     {
-        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
-    }
-
-    public static function bodyTop()
-    {
-        self::$bodyTop = session(self::SESSION_PREFIX . 'bodyTop', '');
-
-        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
-
-        return self::$bodyTop;
+        session([self::SESSION_PREFIX . 'bodyBottom' => self::$bodyBottom]);
     }
 
     public static function headBottom()
     {
+        self::$bodyBottom = session(self::SESSION_PREFIX . 'bodyBottom', '');
+
+        session([self::SESSION_PREFIX . 'bodyBottom' => '']);
+
         $pixelId = config(
             'railanalytics.' .
             env('APP_ENV') .

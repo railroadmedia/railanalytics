@@ -26,7 +26,7 @@ class GoogleAnalyticsTrackingProvider
     {
         self::$headTop = session(self::SESSION_PREFIX . 'headTop', '');
 
-        session([self::SESSION_PREFIX . 'headTop' => self::$headTop]);
+        session([self::SESSION_PREFIX . 'headTop' => '']);
 
         $trackingId = config(
             'railanalytics.' .
