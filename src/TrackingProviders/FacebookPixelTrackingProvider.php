@@ -194,12 +194,40 @@ class FacebookPixelTrackingProvider
                 <script>
                     fbq('track', 'Purchase', {
                         content_ids: ['"
-                            . implode("', '", array_column($products, 'id')) . "'],
+            . implode("', '", array_column($products, 'id')) . "'],
                         content_type: 'product',
                         value: " . number_format($revenue, 2, '.', '') . ",
                         currency: '" . $currency . "'
                     });
                 </script>
             ";
+    }
+
+    /**
+     * @param $value
+     * @param string $currency
+     */
+    public static function trackLead(
+        $value = null,
+        $currency = 'USD'
+    ) {
+        if (is_null($value)) {
+            self::$bodyTop .=
+                "
+                   <script>
+                       fbq('track', 'Lead', {});
+                   </script>
+                ";
+        } else {
+            self::$bodyTop .=
+                "
+                    <script>
+                        fbq('track', 'Lead', {
+                            value: " . number_format($value, 2, '.', '') . ",
+                            currency: '" . $currency . "'
+                        });
+                    </script>
+                ";
+        }
     }
 }
