@@ -23,48 +23,9 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string trackAddPaymentInformation()
  * @method static string trackTransaction(array $products, $transactionId, $revenue, $tax, $shipping, $currency = 'USD')
  * @method static string trackLead($value = null, $currency= 'USD')
- * @method static string trackRegistration()
  */
 class Tracker
 {
-    /**
-     * @param callable $function
-     * @throws Exception
-     * @internal param $trackGroupName
-     */
-    public static function queue(callable $function)
-    {
-        $providerNames = config(
-            'railanalytics.' . env('APP_ENV') . '.active-tracking-providers'
-        );
-
-        if (empty($providerNames) || !is_array($providerNames)) {
-            throw new Exception(
-                'Railanalytics is not configured properly, ' .
-                'you must set a tracking provider group name.'
-            );
-        }
-
-        $function();
-
-        /**
-         * @var $factory TrackingProviderFactory
-         */
-        $factory = app(TrackingProviderFactory::class);
-
-        $outputString = '';
-
-        foreach ($providerNames as $providerName) {
-            $provider = $factory->build($providerName);
-
-            if (!is_null($provider) && method_exists($provider, 'queue')) {
-                $outputString .= call_user_func(
-                    [$provider, 'queue']
-                );
-            }
-        }
-    }
-
     /**
      * @param $name
      * @param $arguments
