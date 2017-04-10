@@ -9,16 +9,17 @@ class GoogleAnalyticsTrackingProvider
     protected static $headTop = '';
     protected static $headBottom = '';
 
-    public static function queue(callable $function)
+    public static function queue()
     {
-        $function();
-
         session(
             [
                 self::SESSION_PREFIX . 'headTop' => self::$headTop,
                 self::SESSION_PREFIX . 'headBottom' => self::$headBottom
             ]
         );
+
+        self::$headTop = '';
+        self::$headBottom = '';
     }
 
     /**
