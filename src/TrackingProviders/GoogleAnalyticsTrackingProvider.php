@@ -156,50 +156,6 @@ class GoogleAnalyticsTrackingProvider
     }
 
     /**
-     * @param array $products
-     * @param int $step
-     * @param string $currency
-     */
-    public static function trackInitiateCheckout(
-        array $products,
-        $step,
-        $value,
-        $currency = 'USD'
-    ) {
-        $output =
-            "
-                <script>
-            ";
-
-        foreach ($products as $product) {
-            $output .=
-                "
-                    ga('ec:addProduct', {
-                        'id': '" . $product['id'] . "',
-                        'name': '" . $product['name'] . "',
-                        'category': '" . $product['category'] . "',
-                        'price': '" . $product['value'] . "',
-                        'quantity': " . $product['quantity'] . "
-                    });
-                ";
-        }
-
-        $output .=
-            "
-                ga('ec:setAction','checkout', {
-                    'step': " . $step . "
-                });
-            ";
-
-        $output .=
-            "
-                </script>
-            ";
-
-        self::$headBottom .= $output;
-    }
-
-    /**
      * @param $step
      * @param $value
      * @param $shippingOption
