@@ -8,8 +8,10 @@ class GoogleAdWordsTrackingProvider
 
     protected static $bodyTop = '';
 
-    public static function queue()
+    public static function queue(callable $function)
     {
+        $function();
+
         session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
     }
 

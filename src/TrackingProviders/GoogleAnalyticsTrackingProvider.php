@@ -9,8 +9,10 @@ class GoogleAnalyticsTrackingProvider
     protected static $headTop = '';
     protected static $headBottom = '';
 
-    public static function queue()
+    public static function queue(callable $function)
     {
+        $function();
+
         session(
             [
                 self::SESSION_PREFIX . 'headTop' => self::$headTop,

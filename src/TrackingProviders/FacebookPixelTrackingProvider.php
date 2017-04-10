@@ -9,10 +9,16 @@ class FacebookPixelTrackingProvider
     protected static $headBottom = '';
     protected static $bodyTop = '';
 
-    public static function queue()
+    public static function queue(callable $function)
     {
-        session([self::SESSION_PREFIX . 'headBottom' => self::$headBottom]);
-        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
+        $function();
+
+        session(
+            [
+                self::SESSION_PREFIX . 'headBottom' => self::$headBottom,
+                self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop
+            ]
+        );
     }
 
     public static function headBottom()
