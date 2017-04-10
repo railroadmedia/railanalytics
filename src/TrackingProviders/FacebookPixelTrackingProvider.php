@@ -100,7 +100,7 @@ class FacebookPixelTrackingProvider
                 <script>
                     fbq('track', 'ViewContent', {
                         content_ids: ['" . $id . "'],
-                        content_type: 'product'
+                        content_type: 'product',
                         value: " . number_format($value, 2, '.', '') . ",
                         currency: '" . $currency . "'
                     });
