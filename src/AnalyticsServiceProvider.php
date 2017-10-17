@@ -1,5 +1,6 @@
 <?php namespace Railroad\Railanalytics;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class AnalyticsServiceProvider extends ServiceProvider
@@ -11,9 +12,9 @@ class AnalyticsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(Dispatcher $events)
     {
-        parent::boot();
+        parent::boot($events);
 
         $this->publishes(
             [
