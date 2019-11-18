@@ -89,8 +89,8 @@ class GoogleAnalyticsTrackingProvider
                 <script>
                     ga('ec:addImpression', {
                         'id': '" . $id . "',
-                        'name': '" . $name . "',
-                        'category': '" . $category . "',
+                        'name': \"" . $name . "\",
+                        'category': \"" . $category . "\",
                         'position': 1
                     });
                 </script>
@@ -117,8 +117,8 @@ class GoogleAnalyticsTrackingProvider
                 <script>
                     ga('ec:addProduct', {
                         'id': '" . $id . "',
-                        'name': '" . $name . "',
-                        'category': '" . $category . "'
+                        'name': \"" . $name . "\",
+                        'category': \"" . $category . "\"
                     });
                     
                     ga('ec:setAction', 'detail');
@@ -147,9 +147,9 @@ class GoogleAnalyticsTrackingProvider
             "
                 <script>
                     ga('ec:addProduct', {
-                        'id': '" . $id . "',
-                        'name': '" . $name . "',
-                        'category': '" . $category . "',
+                        'id': '" . $id . "\",
+                        'name': \"" . $name . "\",
+                        'category': \"" . $category . "',
                         'price': '" . $value . "',
                         'quantity': " . $quantity . "
                     });
@@ -202,8 +202,8 @@ class GoogleAnalyticsTrackingProvider
                 "
                     ga('ec:addProduct', {
                         'id': '" . $product['id'] . "',
-                        'name': '" . $product['name'] . "',
-                        'category': '" . $product['category'] . "',
+                        'name': \"" . $product['name'] . "\",
+                        'category': \"" . $product['category'] . "\",
                         'price': '" . $product['value'] . "',
                         'quantity': " . $product['quantity'] . "
                     });
