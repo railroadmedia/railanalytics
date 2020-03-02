@@ -37,7 +37,15 @@ class GoogleAnalyticsTrackingProvider
             '.providers.google-analytics.tracking-id'
         );
 
-        return
+        $optimiseId = config(
+            'railanalytics.' .
+            env('APP_ENV') .
+            '.providers.google-analytics.optimise-id',
+            null
+        );
+
+        $optimiseCode = "";
+        $analyticsCode =
             "
                 <!-- Analytics Tracking -->
                 <script>
@@ -47,11 +55,32 @@ class GoogleAnalyticsTrackingProvider
                     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
                 
                     ga('create', '" . $trackingId . "', 'auto');
+            ";
+
+
+
+
+        if (!empty($optimiseId)) {
+            $optimiseCode = "
+                <!-- Anti-flicker snippet (recommended)  -->
+                <style>.async-hide { opacity: 0 !important} </style>
+                <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
+                h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
+                (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
+                })(window,document.documentElement,'async-hide','dataLayer',4000,
+                {'GTM-WP9MPV8':true});</script>
+            ";
+
+            $analyticsCode .= "ga('require', '" . $optimiseId . "');";
+        }
+
+        $analyticsCode .= "
                     ga('require', 'ec');
                 </script>
                 <!-- ------------------ -->
-            "
-            . self::$headTop;
+            ";
+
+        return $optimiseCode . $analyticsCode . self::$headTop;
     }
 
     /**
@@ -83,7 +112,8 @@ class GoogleAnalyticsTrackingProvider
         $name,
         $category,
         $currency = 'USD'
-    ) {
+    )
+    {
         self::$headBottom .=
             "    
                 <script>
@@ -110,7 +140,8 @@ class GoogleAnalyticsTrackingProvider
         $category,
         $value,
         $currency = 'USD'
-    ) {
+    )
+    {
 
         self::$headBottom .=
             "
@@ -141,7 +172,8 @@ class GoogleAnalyticsTrackingProvider
         $value,
         $quantity,
         $currency = 'USD'
-    ) {
+    )
+    {
 
         self::$headBottom .=
             "
@@ -191,7 +223,8 @@ class GoogleAnalyticsTrackingProvider
         $tax,
         $shipping,
         $currency = 'USD'
-    ) {
+    )
+    {
         $output =
             "
                 <script>

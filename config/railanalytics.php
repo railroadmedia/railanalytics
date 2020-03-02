@@ -8,7 +8,10 @@ return array(
         'providers' => [
             'google-analytics' =>
                 [
-                    'tracking-id' => 'XXX'
+                    'tracking-id' => 'XXX',
+
+                    // https://support.google.com/optimize/answer/6262084
+                    'optimise-id' => 'XXX' // if set to null, optimise code not be rendered
                 ],
             'google-tag-manager' =>
                 [
