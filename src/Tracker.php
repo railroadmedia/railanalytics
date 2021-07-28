@@ -45,7 +45,7 @@ class Tracker
             'railanalytics.' . env('APP_ENV') . '.active-tracking-providers'
         );
 
-        if (empty($providerNames) || !is_array($providerNames)) {
+        if (!is_array($providerNames)) {
             throw new Exception(
                 'Railanalytics is not configured properly, ' .
                 'you must set a tracking provider group name.'
