@@ -88,14 +88,13 @@ class GoogleAnalyticsV4TrackingProvider
             "
                 <script>
                     gtag('event', 'add_to_cart',{
-                        'content_type': 'product',
-                        'items': [  
+                        items: [  
                             {
-                                'item_id': '" . $id . "',
-                                'item_name': \"" . $name . "\",
-                                'item_category': \"" . $category . "',
-                                'price': '" . $value . "',
-                                'quantity': " . $quantity . "
+                                item_id: '" . $id . "',
+                                item_name: \"" . $name . "\",
+                                item_category: \"" . $category . "',
+                                price: '" . $value . "',
+                                quantity: " . $quantity . "
                             }
                         ]
                     });
@@ -120,6 +119,42 @@ class GoogleAnalyticsV4TrackingProvider
             "    
                 <script>
                     gtag('event', 'view_item', {
+                      items: [
+                        {
+                          item_id: '" . $id . "',
+                          item_name:  \"" . $name . "\",
+                          item_category: \"" . $category . "\",
+                        }
+                      ]
+                    });
+                </script>
+            ";
+    }
+
+
+
+    /**
+     * @param $id
+     * @param $name
+     * @param $category
+     * @param $value
+     * @param string $currency
+     */
+    public static function trackProductDetailsImpression(
+        $id,
+        $name,
+        $category,
+        $value,
+        $currency = 'USD'
+    )
+    {
+
+        self::$headBottom .=
+            "
+                 <script>
+                    gtag('event', 'view_item', {
+                      currency: '" . $currency . "',
+                      value: '" . $value . "',
                       items: [
                         {
                           item_id: '" . $id . "',
@@ -187,7 +222,6 @@ class GoogleAnalyticsV4TrackingProvider
 
         self::$headBottom .= $output;
     }
-
 
 
 }
