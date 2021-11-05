@@ -224,4 +224,53 @@ class GoogleAnalyticsV4TrackingProvider
     }
 
 
+    /**
+     * @param array $products
+     * @param int $step
+     * @param string $currency
+     */
+    public static function trackInitiateCheckout(
+        array $products,
+              $step,
+              $value,
+              $currency = 'USD'
+    ) {
+        $output =
+            "
+                <script>
+            ";
+
+        $output .=
+            "
+                gtag('event', 'begin_checkout', {
+                  currency: '" . $currency . "',
+                  value: '" . $value . "',
+                  items: [
+            ";
+
+        foreach ($products as $product) {
+            $output .=
+                "
+                    {
+                        'item_id': '" . $product['id'] . "',
+                        'item_name': \"" . $product['name'] . "\",
+                        'item_category': \"" . $product['category'] . "\",
+                        'price': '" . $product['value'] . "',
+                        'quantity': " . $product['quantity'] . "
+                    },
+                ";
+        }
+
+        $output .=
+            "   ],
+              });
+            " .
+            "
+                </script>
+            ";
+
+        self::$headBottom .= $output;
+    }
+
+
 }
