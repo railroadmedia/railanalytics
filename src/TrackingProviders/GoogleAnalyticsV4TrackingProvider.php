@@ -27,7 +27,6 @@ class GoogleAnalyticsV4TrackingProvider
      */
     public static function headTop()
     {
-
         self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
 
         session([self::SESSION_PREFIX . 'headTop' => '']);
@@ -84,6 +83,7 @@ class GoogleAnalyticsV4TrackingProvider
         $currency = 'USD'
     )
     {
+
         self::$headBottom .=
             "
                 <script>
@@ -92,7 +92,7 @@ class GoogleAnalyticsV4TrackingProvider
                             {
                                 item_id: '" . $id . "',
                                 item_name: \"" . $name . "\",
-                                item_category: \"" . $category . "',
+                                item_category: \"" . $category . "\",
                                 price: '" . $value . "',
                                 quantity: " . $quantity . "
                             }
@@ -235,6 +235,7 @@ class GoogleAnalyticsV4TrackingProvider
               $value,
               $currency = 'USD'
     ) {
+
         $output =
             "
                 <script>
@@ -254,7 +255,7 @@ class GoogleAnalyticsV4TrackingProvider
                     {
                         'item_id': '" . $product['id'] . "',
                         'item_name': \"" . $product['name'] . "\",
-                        'item_category': \"" . $product['category'] . "\",
+                        'item_category': \"" . $product['type'] . "\",
                         'price': '" . $product['value'] . "',
                         'quantity': " . $product['quantity'] . "
                     },
