@@ -42,7 +42,7 @@ class GoogleAnalyticsV4TrackingProvider
             "
 
                 <!-- Global site tag (gtag.js) - Google Analytics -->
-                <script async src='https://www.googletagmanager.com/gtag/js?id=G-RD2SJQH0N7'></script>
+                <script async src='https://www.googletagmanager.com/gtag/js?id=" . $trackingId . "'></script>
                 <script>
                     window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
