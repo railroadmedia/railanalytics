@@ -14,6 +14,9 @@ class TrackingProviderFactory
             case 'google-analytics':
             case 'ga':
                 return app(GoogleAnalyticsTrackingProvider::class);
+            case 'google-analytics-v4':
+            case 'ga4':
+                return app(GoogleAnalyticsV4TrackingProvider::class);
             case 'google-tag-manager':
             case 'gtm':
                 return app(GoogleTagManagerTrackingProvider::class);
