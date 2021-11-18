@@ -19,6 +19,7 @@ class GoogleAnalyticsTrackingProvider
         );
 
         self::$headTop = '';
+        self::$headTop = '';
         self::$headBottom = '';
     }
 
@@ -179,9 +180,9 @@ class GoogleAnalyticsTrackingProvider
             "
                 <script>
                     ga('ec:addProduct', {
-                        'id': '" . $id . "\",
+                        'id': '" . $id . "',
                         'name': \"" . $name . "\",
-                        'category': \"" . $category . "',
+                        'category': \"" . $category . "\",
                         'price': '" . $value . "',
                         'quantity': " . $quantity . "
                     });
