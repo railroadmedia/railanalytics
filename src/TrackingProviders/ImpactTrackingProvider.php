@@ -2,6 +2,8 @@
 
 namespace Railroad\Railanalytics\TrackingProviders;
 
+use Illuminate\Support\Facades\Auth;
+
 class ImpactTrackingProvider
 {
     const SESSION_PREFIX = 'railanalytics.impact';
@@ -49,10 +51,17 @@ class ImpactTrackingProvider
         self::$bodyTop .= session(self::SESSION_PREFIX . 'bodyTop', '');
         session([self::SESSION_PREFIX . 'bodyTop' => '']);
 
+        $customerId = '';
+        $customerEmail = '';
+        if (Auth::user()) {
+            $customerId = Auth::user()->getId();
+            $customerEmail = sha1(Auth::user()->getEmail());
+        }
+
         return
             "
                 <script type='text/javascript'>
-                    ire('identify', {customerId: 'test-cutomer-id', customerEmail: 'test-customer-email'});
+                    ire('identify', {customerId: '" . $customerId . "', customerEmail: '" . $customerEmail . "'});
                 </script>
             "
             . self::$bodyTop;
