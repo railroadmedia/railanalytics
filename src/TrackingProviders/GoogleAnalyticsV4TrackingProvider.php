@@ -194,8 +194,10 @@ class GoogleAnalyticsV4TrackingProvider
             "
                 gtag('event', 'purchase', {
                   transaction_id: '" . $transactionId . "',
+                  value: '" . $revenue . "',
                   shipping: '" . $shipping . "',
                   tax:  '" . $tax . "',
+                  currency:  '" . $currency . "',
                   items: [
             ";
 
