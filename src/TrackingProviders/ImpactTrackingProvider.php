@@ -111,6 +111,7 @@ class ImpactTrackingProvider
         $currency = 'USD'
     )
     {
+        $tagActionTrackerId = $sid = config('railanalytics.' . env('APP_ENV') . '.providers.impact.tag-action-tracker-id');
         $status = "";
         if ($paymentType == "initial_order") {
             $status = "New";
@@ -135,7 +136,7 @@ class ImpactTrackingProvider
         $output =
             "
                 <script type='text/javascript'>
-                    ire('trackConversion', 27558, {
+                    ire('trackConversion', $tagActionTrackerId, {
                         orderId: '" . $transactionId . "',
                         customerId: '" . self::$customerId . "',
                         customerEmail: '" . self::$customerEmail . "',
@@ -155,6 +156,63 @@ class ImpactTrackingProvider
             ";
 
         self::$headBottom .= $output;
+
+        self::trackTransactionAPI($products, $transactionId, $promoCode, $currency);
+    }
+
+    public static function trackTransactionAPI( array $products,
+        $transactionId, $promoCode, $currency)
+    {
+        $now = date("Y-m-d") . "T" . date("H:i:s");
+
+        $sid = config('railanalytics.' . env('APP_ENV') . '.providers.impact.sid');
+        $authToken = config('railanalytics.' . env('APP_ENV') . '.providers.impact.auth-token');
+        $apiActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.api-action-tracker-id');
+        $campaignId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.campaign-id');
+
+
+        $url = "https://" . $sid . ":" . $authToken . "@api.impact.com/Advertisers/" . $sid . "/Conversions?" .
+            "CampaignId=" . $campaignId . "&ActionTrackerId=" . $apiActionTrackerId . "&EventDate=" . $now.
+            "&OrderId=" . $transactionId . "&CustomerId=" . self::$customerId . "&CustomerEmail=C" . self::$customerEmail .
+            "&OrderPromoCode=" . $promoCode . "&CurrencyCode=" . $currency;
+
+        foreach ($products as $index => $product) {
+            $i = $index + 1;
+            $url .= "&itemCategory" . $i . "=" . $product['category'] ."&ItemSku" . $i . "=" .
+                $product['sku'] . "&ItemSubtotal" . $i . "=" . $product['value'] . "&ItemQuantity" . $i . "=" . $product['quantity'];
+        }
+
+//        $url = "";
+//        $url = "https://IRrBi9uekoT63032711PiY8YYE6HVQztw1:tFaYd3H_pvLUhkzmyuyVRzRrJ7ujv.sX@api.impact.com/Advertisers/IRrBi9uekoT63032711PiY8YYE6HVQztw1/Conversions?CampaignId=14651&ActionTrackerId=27559&EventDate=2021-07-18T06:12:34&OrderId=OID-123&CustomerId=abcd1234&CustomerEmail=C0D0A32C405C68CB538E3891A3E3BCE98887F012&OrderPromoCode=PROMO-123&CurrencyCode=USD&itemCategory1=Category1&ItemSku1=Sku1&ItemSubtotal1=125.59&ItemQuantity1=1";
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($curl, CURLOPT_TIMEOUT, 15);
+
+        $headers = [];
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        $headers[] = 'Content-Length: 0';
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+        $response = curl_exec($curl);
+
+
+        $result = json_decode(json_encode(simplexml_load_string($response)), TRUE);
+
+
+//        if (curl_errno($curl)) {
+////            todo: throw exception
+//        }
+//
+//
+//        if ($result['Status'] != "QUEUED") {
+//            //todo: create error handling!!!
+//            // throw exception
+//        }
+
+        curl_close($curl);
     }
 
 }
