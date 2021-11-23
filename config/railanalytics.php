@@ -34,7 +34,6 @@ return array(
                 ],
             'impact' =>
                 [
-                    'campaign-id' => '',
                     'utt-link' => '',
                     'sid' => '',
                     'auth-token' => '',

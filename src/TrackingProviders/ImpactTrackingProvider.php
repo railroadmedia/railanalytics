@@ -2,6 +2,7 @@
 
 namespace Railroad\Railanalytics\TrackingProviders;
 
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class ImpactTrackingProvider
@@ -160,8 +161,9 @@ class ImpactTrackingProvider
     }
 
     public static function trackTransactionAPI( array $products,
-        $transactionId, $promoCode, $currency)
+        $transactionId, $promoCode, $currency = 'USD')
     {
+
         $now = date("Y-m-d") . "T" . date("H:i:s");
 
         $sid = config('railanalytics.' . env('APP_ENV') . '.providers.impact.sid');
@@ -183,7 +185,6 @@ class ImpactTrackingProvider
 
         $url = str_replace(" ", '%20', $url);
 
-
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -195,7 +196,12 @@ class ImpactTrackingProvider
         $headers[] = 'Content-Length: 0';
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-        curl_exec($curl);
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            throw new Exception('Error in Impact tracking conversion api function from railanalytics: '.curl_error($curl));
+        }
+        
         curl_close($curl);
     }
 
