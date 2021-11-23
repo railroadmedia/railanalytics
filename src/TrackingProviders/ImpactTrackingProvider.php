@@ -182,8 +182,8 @@ class ImpactTrackingProvider
                 $product['sku'] . "&ItemSubtotal" . $i . "=" . $product['value'] . "&ItemQuantity" . $i . "=" . $product['quantity'];
         }
 
-//        $url = "";
-//        $url = "https://IRrBi9uekoT63032711PiY8YYE6HVQztw1:tFaYd3H_pvLUhkzmyuyVRzRrJ7ujv.sX@api.impact.com/Advertisers/IRrBi9uekoT63032711PiY8YYE6HVQztw1/Conversions?CampaignId=14651&ActionTrackerId=27559&EventDate=2021-07-18T06:12:34&OrderId=OID-123&CustomerId=abcd1234&CustomerEmail=C0D0A32C405C68CB538E3891A3E3BCE98887F012&OrderPromoCode=PROMO-123&CurrencyCode=USD&itemCategory1=Category1&ItemSku1=Sku1&ItemSubtotal1=125.59&ItemQuantity1=1";
+        $url = str_replace(" ", '%20', $url);
+
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -196,22 +196,7 @@ class ImpactTrackingProvider
         $headers[] = 'Content-Length: 0';
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-        $response = curl_exec($curl);
-
-
-        $result = json_decode(json_encode(simplexml_load_string($response)), TRUE);
-
-
-//        if (curl_errno($curl)) {
-////            todo: throw exception
-//        }
-//
-//
-//        if ($result['Status'] != "QUEUED") {
-//            //todo: create error handling!!!
-//            // throw exception
-//        }
-
+        curl_exec($curl);
         curl_close($curl);
     }
 
