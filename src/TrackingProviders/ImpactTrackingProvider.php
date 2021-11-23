@@ -157,7 +157,6 @@ class ImpactTrackingProvider
 
         self::$headBottom .= $output;
 
-        self::trackTransactionAPI($products, $transactionId, $promoCode, $currency);
     }
 
     public static function trackTransactionAPI( array $products,

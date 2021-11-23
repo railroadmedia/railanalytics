@@ -21,8 +21,10 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string trackAddToCart($id, $name, $category, $value, $quantity, $currency = null)
  * @method static string trackInitiateCheckout(array $products, $step, $currency = 'USD')
  * @method static string trackAddPaymentInformation()
- * @method static string trackTransaction(array $products, $transactionId, $revenue, $tax, $shipping, $currency = 'USD')
+ * @method static string trackTransaction(array $products, $transactionId, $revenue, $tax, $shipping, $paymentType, $promoCode, $currency = 'USD')
  * @method static string trackLead($value = null, $currency = 'USD')
+ * @method static string trackTransactionAPI(array $products, $promoCode, $currency = 'USD')
+
  */
 class Tracker
 {
