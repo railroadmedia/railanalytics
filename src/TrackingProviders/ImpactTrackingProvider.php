@@ -179,7 +179,7 @@ class ImpactTrackingProvider
 
         foreach ($products as $index => $product) {
             $i = $index + 1;
-            $url .= "&itemCategory" . $i . "=" . $product['category'] ."&ItemSku" . $i . "=" .
+            $url .= "&ItemCategory" . $i . "=" . $product['category'] ."&ItemSku" . $i . "=" .
                 $product['sku'] . "&ItemSubtotal" . $i . "=" . $product['value'] . "&ItemQuantity" . $i . "=" . $product['quantity'];
         }
 
@@ -201,7 +201,7 @@ class ImpactTrackingProvider
         if (curl_errno($curl)) {
             throw new Exception('Error in Impact tracking conversion api function from railanalytics: '.curl_error($curl));
         }
-        
+
         curl_close($curl);
     }
 
