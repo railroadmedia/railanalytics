@@ -39,7 +39,8 @@ return array(
                     'auth-token' => '',
                     'campaign-id' => '',
                     'tag-action-tracker-id' => '',
-                    'api-action-tracker-id' => ''
+                    'api-action-tracker-id' => '',
+                    'sign-up-action-tracker-id' => ''
                 ]
         ]
     ],
