@@ -26,6 +26,9 @@ class TrackingProviderFactory
             case 'facebook-pixel':
             case 'fp':
                 return app(FacebookPixelTrackingProvider::class);
+            case 'impact':
+            case 'im':
+                return app(ImpactTrackingProvider::class);
             default:
                 return null;
         }

@@ -3,8 +3,7 @@
 return array(
     // Settings example
     'local' => [
-        'active-tracking-providers' => ['ga', 'gtm', 'gaw', 'fp', 'ga4'],
-
+        'active-tracking-providers' => ['ga', 'gtm', 'gaw', 'fp', 'ga4', 'im'],
         'providers' => [
             'google-analytics' =>
                 [
@@ -33,6 +32,16 @@ return array(
                 [
                     'pixel-id' => 'XXX'
                 ],
+            'impact' =>
+                [
+                    'utt-link' => '',
+                    'sid' => '',
+                    'auth-token' => '',
+                    'campaign-id' => '',
+                    'tag-action-tracker-id' => '',
+                    'api-action-tracker-id' => '',
+                    'sign-up-action-tracker-id' => ''
+                ]
         ]
     ],
 
