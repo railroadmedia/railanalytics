@@ -113,7 +113,6 @@ class ImpactTrackingProvider
     )
     {
         $tagActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.tag-action-tracker-id');
-        $signUpActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.sign-up-action-tracker-id');
 
         $status = "";
         if ($paymentType == "initial_order") {
@@ -139,16 +138,6 @@ class ImpactTrackingProvider
         $output =
             "
                 <script type='text/javascript'>
-                    ire('trackConversion', $signUpActionTrackerId, {
-                        orderId: '" . $transactionId . "',
-                        customerId: '" . self::$customerId . "',
-                        customerEmail: '" . self::$customerEmail . "'
-                    },
-                    {
-                        verifySiteDefinitionMatch:true
-                    }
-                    );
-
                     ire('trackConversion', $tagActionTrackerId, {
                         orderId: '" . $transactionId . "',
                         customerId: '" . self::$customerId . "',
