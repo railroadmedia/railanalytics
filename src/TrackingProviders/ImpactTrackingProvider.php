@@ -124,7 +124,7 @@ class ImpactTrackingProvider
         $totalDiscount = 0;
         $jsonProductsArray = [];
         foreach ($products as $product) {
-            $totalDiscount =+ $product['discount'];
+            $totalDiscount = $totalDiscount + $product['discount'];
             $jsonProductsArray[] = "
                             {
                                 subTotal: " . $product['quantity'] * $product['value']. ",
