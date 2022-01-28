@@ -121,10 +121,8 @@ class ImpactTrackingProvider
             $status = "Returning";
         }
 
-        $totalDiscount = 0;
         $jsonProductsArray = [];
         foreach ($products as $product) {
-            $totalDiscount = $totalDiscount + $product['discount'];
             $jsonProductsArray[] = "
                             {
                                 subTotal: " . $product['quantity'] * $product['value']. ",
@@ -145,7 +143,6 @@ class ImpactTrackingProvider
                         customerStatus: '" . $status . "',
                         currencyCode: '" . $currency . "',
                         orderPromoCode: '" . $promoCode . "',
-                        orderDiscount: " . $totalDiscount . ",
                         items: [";
         $output .= implode(" ", $jsonProductsArray);
         $output .=
