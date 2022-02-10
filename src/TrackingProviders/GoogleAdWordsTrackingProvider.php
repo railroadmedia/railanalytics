@@ -30,6 +30,8 @@ class GoogleAdWordsTrackingProvider
         $revenue,
         $tax,
         $shipping,
+        $paymentType,
+        $promoCode,
         $currency = 'USD'
     ) {
         $conversionId = config(

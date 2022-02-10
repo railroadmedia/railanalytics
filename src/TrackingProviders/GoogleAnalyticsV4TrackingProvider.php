@@ -178,18 +178,19 @@ class GoogleAnalyticsV4TrackingProvider
      */
     public static function trackTransaction(
         array $products,
-              $transactionId,
-              $revenue,
-              $tax,
-              $shipping,
-              $currency = 'USD'
+        $transactionId,
+        $revenue,
+        $tax,
+        $shipping,
+        $paymentType = null,
+        $promoCode = '',
+        $currency = 'USD'
     )
     {
         $output =
             "
                 <script>
             ";
-
         $output .=
             "
                 gtag('event', 'purchase', {

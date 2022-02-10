@@ -194,6 +194,8 @@ class FacebookPixelTrackingProvider
         $revenue,
         $tax,
         $shipping,
+        $paymentType,
+        $promoCode,
         $currency = 'USD'
     ) {
         self::$bodyTop .=

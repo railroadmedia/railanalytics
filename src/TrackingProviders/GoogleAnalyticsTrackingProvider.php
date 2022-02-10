@@ -223,6 +223,8 @@ class GoogleAnalyticsTrackingProvider
         $revenue,
         $tax,
         $shipping,
+        $paymentType,
+        $promoCode,
         $currency = 'USD'
     )
     {
