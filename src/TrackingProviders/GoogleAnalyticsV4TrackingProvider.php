@@ -33,8 +33,8 @@ class GoogleAnalyticsV4TrackingProvider
 
         $trackingId = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-analytics-v4.tracking-id'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-analytics-v4.tracking-id'
         );
 
         return

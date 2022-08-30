@@ -11,10 +11,9 @@ class GoogleTagManagerTrackingProvider
     {
         $trackingId = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-tag-manager.tracking-id'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-tag-manager.tracking-id'
         );
-
         return
             "
             <!-- Google Tag Manager -->
@@ -32,8 +31,8 @@ class GoogleTagManagerTrackingProvider
     {
         $trackingId = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-tag-manager.tracking-id'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-tag-manager.tracking-id'
         );
 
         return
