@@ -36,28 +36,28 @@ class GoogleAdWordsTrackingProvider
     ) {
         $conversionId = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-adwords.google-conversion-id'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-adwords.google-conversion-id'
         );
         $conversionLanguage = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-adwords.google-conversion-language'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-adwords.google-conversion-language'
         );
         $conversionFormat = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-adwords.google-conversion-format'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-adwords.google-conversion-format'
         );
         $conversionColor = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-adwords.google-conversion-color'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-adwords.google-conversion-color'
         );
         $conversionLabel = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.google-adwords.google-conversion-label'
+            env('APP_ENV') . ".providers." . brand() .
+            '.google-adwords.google-conversion-label'
         );
 
         $revenue = number_format($revenue, 2, '.', '');

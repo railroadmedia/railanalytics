@@ -22,8 +22,8 @@ class ImpactTrackingProvider
     public function __construct()
     {
         if (Auth::user()) {
-            self::$customerId = Auth::user()->getId();
-            self::$customerEmail = md5(Auth::user()->getEmail());
+            self::$customerId = Auth::user()->id;
+            self::$customerEmail = md5(Auth::user()->email);
         }
     }
 
@@ -50,7 +50,7 @@ class ImpactTrackingProvider
     {
         self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
         session([self::SESSION_PREFIX . 'headTop' => '']);
-        $uttLink = config('railanalytics.' . env('APP_ENV') . '.providers.impact.utt-link');
+        $uttLink = config('railanalytics.' . env('APP_ENV') . ".providers." . brand() . '.impact.utt-link');
 
         return
             self::$headTop .
@@ -112,7 +112,7 @@ class ImpactTrackingProvider
         $currency = 'USD'
     )
     {
-        $tagActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.tag-action-tracker-id');
+        $tagActionTrackerId = config('railanalytics.' . env('APP_ENV') . ".providers." . brand() . '.impact.tag-action-tracker-id');
 
         $status = "";
         if ($paymentType == "initial_order") {
@@ -164,10 +164,10 @@ class ImpactTrackingProvider
 
         $now = date("Y-m-d") . "T" . date("H:i:s");
 
-        $sid = config('railanalytics.' . env('APP_ENV') . '.providers.impact.sid');
-        $authToken = config('railanalytics.' . env('APP_ENV') . '.providers.impact.auth-token');
-        $apiActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.api-action-tracker-id');
-        $campaignId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.campaign-id');
+        $sid = config('railanalytics.' . env('APP_ENV') . ".providers." . brand() . '.impact.sid');
+        $authToken = config('railanalytics.' . env('APP_ENV') . ".providers." . brand() . '.impact.auth-token');
+        $apiActionTrackerId = config('railanalytics.' . env('APP_ENV') . ".providers." . brand() . '.impact.api-action-tracker-id');
+        $campaignId = config('railanalytics.' . env('APP_ENV') . ".providers." . brand() . '.impact.campaign-id');
 
 
         $url = "https://" . $sid . ":" . $authToken . "@api.impact.com/Advertisers/" . $sid . "/Conversions?" .

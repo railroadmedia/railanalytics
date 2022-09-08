@@ -30,8 +30,8 @@ class FacebookPixelTrackingProvider
 
         $pixelId = config(
             'railanalytics.' .
-            env('APP_ENV') .
-            '.providers.facebook-pixel.pixel-id'
+            env('APP_ENV') . ".providers." . brand() .
+            '.facebook-pixel.pixel-id'
         );
 
         return
