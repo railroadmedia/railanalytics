@@ -2,7 +2,7 @@
 
 return array(
     // Settings example
-    'local' => [
+    'development' => [
         'active-tracking-providers' => ['ga', 'gtm', 'gaw', 'fp', 'ga4', 'im'],
         'providers' => [
             'drumeo' = [
@@ -143,14 +143,10 @@ return array(
         ]
     ],
 
-    // Production
-    /*
-    'production' => [
-        'active-tracking-providers' => [...],
+    /* For each environment, we set the proper track ids for the providers */
+//    'staging' => []
+//    'production' => []
 
-        'providers' => [...]
-    ]
-    */
 
-    // Etc
+
 );
