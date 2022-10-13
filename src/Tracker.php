@@ -43,9 +43,8 @@ class Tracker
      */
     public static function __callStatic($name, $arguments)
     {
-        $providerNames = config(
-            'railanalytics.' . env('APP_ENV') . '.active-tracking-providers'
-        );
+        $providerNames = env('APP_ENV') ?
+            config('railanalytics.' . env('APP_ENV') . '.active-tracking-providers') : [];
 
         if (!is_array($providerNames)) {
             throw new Exception(
