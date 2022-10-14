@@ -45,6 +45,11 @@ return array(
         ]
     ],
 
+    // Beta testing
+    /*
+    'beta-testing' => []
+    */
+
     // Production
     /*
     'production' => [
