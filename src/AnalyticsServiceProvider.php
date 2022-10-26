@@ -20,6 +20,9 @@ class AnalyticsServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/railanalytics.php' => config_path('railanalytics.php'),
             ]
         );
+
+        $this->loadViewsFrom(__DIR__ . '/../views', 'railanalytics');
+        $this->loadRoutesFrom(__DIR__.'/../routes/railanalytics-routes.php');
     }
 
     /**
