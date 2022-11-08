@@ -1,6 +1,7 @@
 <?php
 
 return array(
+    'blank_tracking_page_middleware_group_name' => 'my_middlware_group',
     // Settings example
     'local' => [
         'active-tracking-providers' => ['ga', 'gtm', 'gaw', 'fp', 'ga4', 'im'],
