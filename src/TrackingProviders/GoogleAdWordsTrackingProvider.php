@@ -2,26 +2,40 @@
 
 namespace Railroad\Railanalytics\TrackingProviders;
 
+use Railroad\Railanalytics\Tracker;
+
 class GoogleAdWordsTrackingProvider
 {
     use GetBrandFromDomain;
 
-    const SESSION_PREFIX = 'railanalytics.google-analytics';
+    const SESSION_PREFIX = 'railanalytics.google-adwords.';
 
     protected static $bodyTop = '';
 
-    public static function queue()
+    public static function queue($brand = null)
     {
-        session([self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop]);
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        session(
+            [
+                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$bodyTop
+            ]
+        );
 
         self::$bodyTop = '';
     }
 
-    public static function bodyTop()
+    public static function bodyTop($brand = null)
     {
-        self::$bodyTop .= session(self::SESSION_PREFIX . 'bodyTop', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'bodyTop' => '']);
+        self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
 
         return self::$bodyTop;
     }
@@ -36,24 +50,30 @@ class GoogleAdWordsTrackingProvider
         $promoCode,
         $currency = 'USD'
     ) {
+        $brand = Tracker::$brandOverride;
+
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         $conversionId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-adwords.google-conversion-id'
         );
         $conversionLanguage = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-adwords.google-conversion-language'
         );
         $conversionFormat = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-adwords.google-conversion-format'
         );
         $conversionColor = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-adwords.google-conversion-color'
         );
         $conversionLabel = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-adwords.google-conversion-label'
         );
 

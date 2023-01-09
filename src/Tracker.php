@@ -32,7 +32,7 @@ class Tracker
 {
     use GetBrandFromDomain;
 
-    private static $brandOverride = null;
+    public static $brandOverride = null;
 
     public static function queue($brand, callable $function)
     {

@@ -77,7 +77,7 @@ class FacebookPixelTrackingProvider
             $brand = self::getBrandFromDomain();
         }
 
-        self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
+        self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
 
         session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
 
