@@ -3,6 +3,7 @@
 namespace Railroad\Railanalytics;
 
 use Exception;
+use Railroad\Railanalytics\TrackingProviders\GetBrandFromDomain;
 use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
 
 /**
@@ -28,6 +29,8 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  */
 class Tracker
 {
+    use GetBrandFromDomain;
+
     public static function queue(callable $function)
     {
         $function();
@@ -45,7 +48,7 @@ class Tracker
     {
         $environment = (in_array(env('APP_ENV'), ['local', 'beta-testing', 'production'])) ? env('APP_ENV') : 'beta-testing';
         $providerNames = config(
-            'railanalytics.' . self::getBrandFromDomain() . $environment . '.active-tracking-providers'
+            'railanalytics.' . self::getBrandFromDomain() . '.' . $environment . '.active-tracking-providers'
         );
 
         if (!is_array($providerNames)) {
