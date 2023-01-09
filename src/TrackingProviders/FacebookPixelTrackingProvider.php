@@ -4,6 +4,8 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class FacebookPixelTrackingProvider
 {
+    use GetBrandFromDomain;
+
     const SESSION_PREFIX = 'railanalytics.facebook-pixel';
 
     protected static $headBottom = '';
@@ -29,10 +31,13 @@ class FacebookPixelTrackingProvider
         session([self::SESSION_PREFIX . 'headBottom' => '']);
 
         $pixelId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
             '.providers.facebook-pixel.pixel-id'
         );
+
+        if (empty($pixelId)) {
+            return '';
+        }
 
         return
             "
@@ -101,7 +106,6 @@ class FacebookPixelTrackingProvider
         $value,
         $currency = 'USD'
     ) {
-
         self::$bodyTop .=
             "
                 <script>
@@ -131,7 +135,6 @@ class FacebookPixelTrackingProvider
         $quantity,
         $currency = 'USD'
     ) {
-
         self::$bodyTop .=
             "
                 <script>

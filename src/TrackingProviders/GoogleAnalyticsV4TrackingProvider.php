@@ -4,6 +4,8 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleAnalyticsV4TrackingProvider
 {
+    use GetBrandFromDomain;
+
     const SESSION_PREFIX = 'railanalytics.google-analytics-v4';
 
     protected static $headTop = '';
@@ -32,10 +34,13 @@ class GoogleAnalyticsV4TrackingProvider
         session([self::SESSION_PREFIX . 'headTop' => '']);
 
         $trackingId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
             '.providers.google-analytics-v4.tracking-id'
         );
+
+        if (empty($trackingId)) {
+            return '';
+        }
 
         return
             self::$headTop .
@@ -47,7 +52,7 @@ class GoogleAnalyticsV4TrackingProvider
                     window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '" . $trackingId. "');
+                  gtag('config', '" . $trackingId . "');
                   
                 </script>
             ";
@@ -81,9 +86,7 @@ class GoogleAnalyticsV4TrackingProvider
         $value,
         $quantity,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                 <script>
@@ -113,8 +116,7 @@ class GoogleAnalyticsV4TrackingProvider
         $name,
         $category,
         $currency = 'USD'
-    )
-    {
+    ) {
         self::$headBottom .=
             "    
                 <script>
@@ -132,7 +134,6 @@ class GoogleAnalyticsV4TrackingProvider
     }
 
 
-
     /**
      * @param $id
      * @param $name
@@ -146,9 +147,7 @@ class GoogleAnalyticsV4TrackingProvider
         $category,
         $value,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                  <script>
@@ -185,8 +184,7 @@ class GoogleAnalyticsV4TrackingProvider
         $paymentType = null,
         $promoCode = '',
         $currency = 'USD'
-    )
-    {
+    ) {
         $output =
             "
                 <script>
@@ -234,11 +232,10 @@ class GoogleAnalyticsV4TrackingProvider
      */
     public static function trackInitiateCheckout(
         array $products,
-              $step,
-              $value,
-              $currency = 'USD'
+        $step,
+        $value,
+        $currency = 'USD'
     ) {
-
         $output =
             "
                 <script>

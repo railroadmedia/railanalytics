@@ -4,16 +4,21 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleTagManagerTrackingProvider
 {
+    use GetBrandFromDomain;
+
     protected static $headTop = '';
     protected static $bodyTop = '';
 
     public static function headTop()
     {
         $trackingId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
             '.providers.google-tag-manager.tracking-id'
         );
+
+        if (empty($trackingId)) {
+            return '';
+        }
 
         return
             "
@@ -31,10 +36,13 @@ class GoogleTagManagerTrackingProvider
     public static function bodyTop()
     {
         $trackingId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
             '.providers.google-tag-manager.tracking-id'
         );
+
+        if (empty($trackingId)) {
+            return '';
+        }
 
         return
             "

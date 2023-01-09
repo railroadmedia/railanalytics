@@ -45,7 +45,7 @@ class Tracker
     {
         $environment = (in_array(env('APP_ENV'), ['local', 'beta-testing', 'production'])) ? env('APP_ENV') : 'beta-testing';
         $providerNames = config(
-            'railanalytics.' . $environment . '.active-tracking-providers'
+            'railanalytics.' . self::getBrandFromDomain() . $environment . '.active-tracking-providers'
         );
 
         if (!is_array($providerNames)) {

@@ -4,6 +4,8 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleAnalyticsTrackingProvider
 {
+    use GetBrandFromDomain;
+
     const SESSION_PREFIX = 'railanalytics.google-analytics';
 
     protected static $headTop = '';
@@ -33,17 +35,19 @@ class GoogleAnalyticsTrackingProvider
         session([self::SESSION_PREFIX . 'headTop' => '']);
 
         $trackingId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
             '.providers.google-analytics.tracking-id'
         );
 
         $optimiseId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
             '.providers.google-analytics.optimise-id',
             null
         );
+
+        if (empty($trackingId)) {
+            return '';
+        }
 
         $optimiseCode = "";
         $analyticsCode =
@@ -57,8 +61,6 @@ class GoogleAnalyticsTrackingProvider
                 
                     ga('create', '" . $trackingId . "', 'auto');
             ";
-
-
 
 
         if (!empty($optimiseId)) {
@@ -113,8 +115,7 @@ class GoogleAnalyticsTrackingProvider
         $name,
         $category,
         $currency = 'USD'
-    )
-    {
+    ) {
         self::$headBottom .=
             "    
                 <script>
@@ -141,9 +142,7 @@ class GoogleAnalyticsTrackingProvider
         $category,
         $value,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                 <script>
@@ -173,9 +172,7 @@ class GoogleAnalyticsTrackingProvider
         $value,
         $quantity,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                 <script>
@@ -226,8 +223,7 @@ class GoogleAnalyticsTrackingProvider
         $paymentType,
         $promoCode,
         $currency = 'USD'
-    )
-    {
+    ) {
         $output =
             "
                 <script>

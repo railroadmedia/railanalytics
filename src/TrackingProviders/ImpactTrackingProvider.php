@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 
 class ImpactTrackingProvider
 {
+    use GetBrandFromDomain;
+
     const SESSION_PREFIX = 'railanalytics.impact';
 
     protected static $headTop = '';
@@ -50,7 +52,14 @@ class ImpactTrackingProvider
     {
         self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
         session([self::SESSION_PREFIX . 'headTop' => '']);
-        $uttLink = config('railanalytics.' . env('APP_ENV') . '.providers.impact.utt-link');
+        $uttLink = config(
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            '.providers.impact.utt-link'
+        );
+
+        if (empty($uttLink)) {
+            return '';
+        }
 
         return
             self::$headTop .
@@ -59,7 +68,7 @@ class ImpactTrackingProvider
                 <script type='text/javascript'>
                     (function(a,b,c,d,e,f,g){e['ire_o']=c;e[c]=e[c]||function(){(e[c].a=e[c].a||[]).push(arguments)};
                         f=d.createElement(b);g=d.getElementsByTagName(b)[0];f.async=1;f.src=a;g.parentNode.insertBefore(f,g);})
-                    ('https://utt.impactcdn.com/" .  $uttLink . ".js','script','ire',document,window); 
+                    ('https://utt.impactcdn.com/" . $uttLink . ".js','script','ire',document,window); 
                 </script>
             ";
     }
@@ -110,9 +119,15 @@ class ImpactTrackingProvider
         $paymentType = '',
         $promoCode = '',
         $currency = 'USD'
-    )
-    {
-        $tagActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.tag-action-tracker-id');
+    ) {
+        $tagActionTrackerId = config(
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            '.providers.impact.tag-action-tracker-id'
+        );
+
+        if (empty($tagActionTrackerId)) {
+            return '';
+        }
 
         $status = "";
         if ($paymentType == "initial_order") {
@@ -125,13 +140,12 @@ class ImpactTrackingProvider
         foreach ($products as $product) {
             $jsonProductsArray[] = "
                             {
-                                subTotal: " . $product['quantity'] * $product['value']. ",
+                                subTotal: " . $product['quantity'] * $product['value'] . ",
                                 category: \"" . $product['category'] . "\",
                                 sku: \"" . $product['sku'] . "\",
                                 quantity: " . $product['quantity'] . ",
                                 name: \"" . $product['name'] . "\",
                             },";
-
         }
         $output =
             "
@@ -146,7 +160,7 @@ class ImpactTrackingProvider
                         items: [";
         $output .= implode(" ", $jsonProductsArray);
         $output .=
-                    "
+            "
                         ],
                     });
             " .
@@ -155,29 +169,40 @@ class ImpactTrackingProvider
             ";
 
         self::$headBottom .= $output;
-
     }
 
-    public static function trackTransactionAPI( array $products,
-        $transactionId, $promoCode, $currency = 'USD')
-    {
-
+    public static function trackTransactionAPI(
+        array $products,
+        $transactionId,
+        $promoCode,
+        $currency = 'USD'
+    ) {
         $now = date("Y-m-d") . "T" . date("H:i:s");
 
-        $sid = config('railanalytics.' . env('APP_ENV') . '.providers.impact.sid');
-        $authToken = config('railanalytics.' . env('APP_ENV') . '.providers.impact.auth-token');
-        $apiActionTrackerId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.api-action-tracker-id');
-        $campaignId = config('railanalytics.' . env('APP_ENV') . '.providers.impact.campaign-id');
+        $sid = config('railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            '.providers.impact.sid');
+        $authToken = config(
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            '.providers.impact.auth-token'
+        );
+        $apiActionTrackerId = config(
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            '.providers.impact.api-action-tracker-id'
+        );
+        $campaignId = config(
+            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            '.providers.impact.campaign-id'
+        );
 
 
         $url = "https://" . $sid . ":" . $authToken . "@api.impact.com/Advertisers/" . $sid . "/Conversions?" .
-            "CampaignId=" . $campaignId . "&ActionTrackerId=" . $apiActionTrackerId . "&EventDate=" . $now.
+            "CampaignId=" . $campaignId . "&ActionTrackerId=" . $apiActionTrackerId . "&EventDate=" . $now .
             "&OrderId=" . $transactionId . "&CustomerId=" . self::$customerId . "&CustomerEmail=C" . self::$customerEmail .
             "&OrderPromoCode=" . $promoCode . "&CurrencyCode=" . $currency;
 
         foreach ($products as $index => $product) {
             $i = $index + 1;
-            $url .= "&ItemCategory" . $i . "=" . $product['category'] ."&ItemSku" . $i . "=" .
+            $url .= "&ItemCategory" . $i . "=" . $product['category'] . "&ItemSku" . $i . "=" .
                 $product['sku'] . "&ItemSubtotal" . $i . "=" . $product['value'] . "&ItemQuantity" . $i . "=" . $product['quantity'];
         }
 
@@ -197,7 +222,9 @@ class ImpactTrackingProvider
         $response = curl_exec($curl);
 
         if (curl_errno($curl)) {
-            throw new Exception('Error in Impact tracking conversion api function from railanalytics: '.curl_error($curl));
+            throw new Exception(
+                'Error in Impact tracking conversion api function from railanalytics: ' . curl_error($curl)
+            );
         }
 
         curl_close($curl);
