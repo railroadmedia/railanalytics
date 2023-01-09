@@ -4,12 +4,13 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Railroad\Railanalytics\Tracker;
 
 class ImpactTrackingProvider
 {
     use GetBrandFromDomain;
 
-    const SESSION_PREFIX = 'railanalytics.impact';
+    const SESSION_PREFIX = 'railanalytics.impact.';
 
     protected static $headTop = '';
     protected static $headBottom = '';
@@ -29,31 +30,40 @@ class ImpactTrackingProvider
         }
     }
 
-    public static function queue()
+    public static function queue($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         session(
             [
-                self::SESSION_PREFIX . 'headTop' => self::$headTop,
-                self::SESSION_PREFIX . 'headBottom' => self::$headBottom,
-                self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop
+                self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
+                self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom,
+                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$headBottom,
             ]
         );
 
         self::$headTop = '';
-        self::$headBottom = '';
         self::$bodyTop = '';
+        self::$headBottom = '';
     }
-
 
     /**
      * @return string
      */
-    public static function headTop()
+    public static function headTop($brand = null)
     {
-        self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
-        session([self::SESSION_PREFIX . 'headTop' => '']);
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
+
         $uttLink = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.utt-link'
         );
 
@@ -76,10 +86,15 @@ class ImpactTrackingProvider
     /**
      * @return string
      */
-    public static function headBottom()
+    public static function headBottom($brand = null)
     {
-        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
-        session([self::SESSION_PREFIX . 'headBottom' => '']);
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.headBottom', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
         return
             self::$headBottom . " ";
@@ -88,10 +103,15 @@ class ImpactTrackingProvider
     /**
      * @return string
      */
-    public static function bodyTop()
+    public static function bodyTop($brand = null)
     {
-        self::$bodyTop .= session(self::SESSION_PREFIX . 'bodyTop', '');
-        session([self::SESSION_PREFIX . 'bodyTop' => '']);
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
 
         return
             "
@@ -120,8 +140,14 @@ class ImpactTrackingProvider
         $promoCode = '',
         $currency = 'USD'
     ) {
+        $brand = Tracker::$brandOverride;
+
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         $tagActionTrackerId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.tag-action-tracker-id'
         );
 
@@ -177,20 +203,26 @@ class ImpactTrackingProvider
         $promoCode,
         $currency = 'USD'
     ) {
+        $brand = Tracker::$brandOverride;
+
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         $now = date("Y-m-d") . "T" . date("H:i:s");
 
-        $sid = config('railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+        $sid = config('railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.sid');
         $authToken = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.auth-token'
         );
         $apiActionTrackerId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.api-action-tracker-id'
         );
         $campaignId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.campaign-id'
         );
 
