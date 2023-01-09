@@ -6,17 +6,21 @@ class GoogleAnalyticsV4TrackingProvider
 {
     use GetBrandFromDomain;
 
-    const SESSION_PREFIX = 'railanalytics.google-analytics-v4';
+    const SESSION_PREFIX = 'railanalytics.google-analytics-v4.';
 
     protected static $headTop = '';
     protected static $headBottom = '';
 
-    public static function queue()
+    public static function queue($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         session(
             [
-                self::SESSION_PREFIX . 'headTop' => self::$headTop,
-                self::SESSION_PREFIX . 'headBottom' => self::$headBottom
+                self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
+                self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom
             ]
         );
 
@@ -27,14 +31,18 @@ class GoogleAnalyticsV4TrackingProvider
     /**
      * @return string
      */
-    public static function headTop()
+    public static function headTop($brand = null)
     {
-        self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'headTop' => '']);
+        self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
 
         $trackingId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-analytics-v4.tracking-id'
         );
 
@@ -61,10 +69,15 @@ class GoogleAnalyticsV4TrackingProvider
     /**
      * @return string
      */
-    public static function headBottom()
+    public static function headBottom($brand = null)
     {
-        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
-        session([self::SESSION_PREFIX . 'headBottom' => '']);
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.headBottom', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
         return
             self::$headBottom . " ";
