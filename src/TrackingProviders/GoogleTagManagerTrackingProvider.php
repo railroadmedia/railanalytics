@@ -6,13 +6,40 @@ class GoogleTagManagerTrackingProvider
 {
     use GetBrandFromDomain;
 
+    const SESSION_PREFIX = 'railanalytics.google-tag-manager.';
+
     protected static $headTop = '';
     protected static $bodyTop = '';
 
-    public static function headTop()
+    public static function queue($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        session(
+            [
+                self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
+                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$bodyTop
+            ]
+        );
+
+        self::$headTop = '';
+        self::$bodyTop = '';
+    }
+
+    public static function headTop($brand = null)
+    {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
+
         $trackingId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-tag-manager.tracking-id'
         );
 
@@ -33,10 +60,18 @@ class GoogleTagManagerTrackingProvider
             . self::$headTop;
     }
 
-    public static function bodyTop()
+    public static function bodyTop($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
+
         $trackingId = config(
-            'railanalytics.' . self::getBrandFromDomain() . '.' . env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-tag-manager.tracking-id'
         );
 
