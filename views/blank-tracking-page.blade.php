@@ -3,12 +3,16 @@
 <html lang="en">
 <head>
 
-    <script type="text/javascript">
-        window.history.replaceState({}, document.title, window.location.pathname);
-    </script>
+    @php
+        $cacheKey = 'none';
 
-    @if(request()->has('headTop'))
-        {!! request()->get('headTop') !!}
+        if (!empty(request()->get('cache_key'))) {
+            $cacheKey = request()->get('cache_key');
+        }
+    @endphp
+
+    @if(cache()->has($cacheKey))
+        {!! cache()->get($cacheKey)['headTop'] ?? '' !!}
     @else
         {!! \Railroad\Railanalytics\Tracker::headTop() !!}
     @endif
@@ -20,26 +24,33 @@
     <meta name="description" content="Musora Tracking Page">
     <meta name="author" content="Musora Media Inc">
 
-    @if(request()->has('headBottom'))
-        {!! request()->get('headBottom') !!}
+    @if(cache()->has($cacheKey))
+        {!! cache()->get($cacheKey)['headBottom'] ?? '' !!}
     @else
         {!! \Railroad\Railanalytics\Tracker::headBottom() !!}
     @endif
+
 </head>
 
 <body>
 
-@if(request()->has('bodyTop'))
-    {!! request()->get('bodyTop') !!}
+@if(cache()->has($cacheKey))
+    {!! cache()->get($cacheKey)['bodyTop'] ?? '' !!}
 @else
     {!! \Railroad\Railanalytics\Tracker::bodyTop() !!}
 @endif
 
-@if(request()->has('bodyBottom'))
-    {!! request()->get('bodyBottom') !!}
+@if(cache()->has($cacheKey))
+    {!! cache()->get($cacheKey)['bodyBottom'] ?? '' !!}
 @else
     {!! \Railroad\Railanalytics\Tracker::bodyBottom() !!}
 @endif
+
+@php
+    if (cache()->has($cacheKey)) {
+//        cache()->delete($cacheKey);
+    }
+@endphp
 
 </body>
 </html>
