@@ -4,21 +4,26 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleAnalyticsTrackingProvider
 {
-    const SESSION_PREFIX = 'railanalytics.google-analytics';
+    use GetBrandFromDomain;
+
+    const SESSION_PREFIX = 'railanalytics.google-analytics.';
 
     protected static $headTop = '';
     protected static $headBottom = '';
 
-    public static function queue()
+    public static function queue($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         session(
             [
-                self::SESSION_PREFIX . 'headTop' => self::$headTop,
-                self::SESSION_PREFIX . 'headBottom' => self::$headBottom
+                self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
+                self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom
             ]
         );
 
-        self::$headTop = '';
         self::$headTop = '';
         self::$headBottom = '';
     }
@@ -26,24 +31,30 @@ class GoogleAnalyticsTrackingProvider
     /**
      * @return string
      */
-    public static function headTop()
+    public static function headTop($brand = null)
     {
-        self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'headTop' => '']);
+        self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
 
         $trackingId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-analytics.tracking-id'
         );
 
         $optimiseId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-analytics.optimise-id',
             null
         );
+
+        if (empty($trackingId)) {
+            return '';
+        }
 
         $optimiseCode = "";
         $analyticsCode =
@@ -57,8 +68,6 @@ class GoogleAnalyticsTrackingProvider
                 
                     ga('create', '" . $trackingId . "', 'auto');
             ";
-
-
 
 
         if (!empty($optimiseId)) {
@@ -87,11 +96,15 @@ class GoogleAnalyticsTrackingProvider
     /**
      * @return string
      */
-    public static function headBottom()
+    public static function headBottom($brand = null)
     {
-        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'headBottom' => '']);
+        self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.headBottom', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
         return
             self::$headBottom .
@@ -113,8 +126,7 @@ class GoogleAnalyticsTrackingProvider
         $name,
         $category,
         $currency = 'USD'
-    )
-    {
+    ) {
         self::$headBottom .=
             "    
                 <script>
@@ -141,9 +153,7 @@ class GoogleAnalyticsTrackingProvider
         $category,
         $value,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                 <script>
@@ -173,9 +183,7 @@ class GoogleAnalyticsTrackingProvider
         $value,
         $quantity,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                 <script>
@@ -226,8 +234,7 @@ class GoogleAnalyticsTrackingProvider
         $paymentType,
         $promoCode,
         $currency = 'USD'
-    )
-    {
+    ) {
         $output =
             "
                 <script>

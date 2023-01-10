@@ -4,17 +4,23 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class FacebookPixelTrackingProvider
 {
-    const SESSION_PREFIX = 'railanalytics.facebook-pixel';
+    use GetBrandFromDomain;
+
+    const SESSION_PREFIX = 'railanalytics.facebook-pixel.';
 
     protected static $headBottom = '';
     protected static $bodyTop = '';
 
-    public static function queue()
+    public static function queue($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         session(
             [
-                self::SESSION_PREFIX . 'headBottom' => self::$headBottom,
-                self::SESSION_PREFIX . 'bodyTop' => self::$bodyTop
+                self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom,
+                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$bodyTop
             ]
         );
 
@@ -22,17 +28,27 @@ class FacebookPixelTrackingProvider
         self::$bodyTop = '';
     }
 
-    public static function headBottom()
+    /**
+     * @return string
+     */
+    public static function headBottom($brand = null)
     {
-        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'headBottom' => '']);
+        self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.headBottom', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
         $pixelId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.facebook-pixel.pixel-id'
         );
+
+        if (empty($pixelId)) {
+            return '';
+        }
 
         return
             "
@@ -55,11 +71,15 @@ class FacebookPixelTrackingProvider
             . self::$headBottom;
     }
 
-    public static function bodyTop()
+    public static function bodyTop($brand = null)
     {
-        self::$bodyTop .= session(self::SESSION_PREFIX . 'bodyTop', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'bodyTop' => '']);
+        self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
 
         return self::$bodyTop;
     }
@@ -101,7 +121,6 @@ class FacebookPixelTrackingProvider
         $value,
         $currency = 'USD'
     ) {
-
         self::$bodyTop .=
             "
                 <script>
@@ -131,7 +150,6 @@ class FacebookPixelTrackingProvider
         $quantity,
         $currency = 'USD'
     ) {
-
         self::$bodyTop .=
             "
                 <script>

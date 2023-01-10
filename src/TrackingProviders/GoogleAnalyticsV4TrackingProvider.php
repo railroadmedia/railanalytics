@@ -4,17 +4,23 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 class GoogleAnalyticsV4TrackingProvider
 {
-    const SESSION_PREFIX = 'railanalytics.google-analytics-v4';
+    use GetBrandFromDomain;
+
+    const SESSION_PREFIX = 'railanalytics.google-analytics-v4.';
 
     protected static $headTop = '';
     protected static $headBottom = '';
 
-    public static function queue()
+    public static function queue($brand = null)
     {
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         session(
             [
-                self::SESSION_PREFIX . 'headTop' => self::$headTop,
-                self::SESSION_PREFIX . 'headBottom' => self::$headBottom
+                self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
+                self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom
             ]
         );
 
@@ -25,17 +31,24 @@ class GoogleAnalyticsV4TrackingProvider
     /**
      * @return string
      */
-    public static function headTop()
+    public static function headTop($brand = null)
     {
-        self::$headTop .= session(self::SESSION_PREFIX . 'headTop', '');
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
 
-        session([self::SESSION_PREFIX . 'headTop' => '']);
+        self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
 
         $trackingId = config(
-            'railanalytics.' .
-            env('APP_ENV') .
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.google-analytics-v4.tracking-id'
         );
+
+        if (empty($trackingId)) {
+            return '';
+        }
 
         return
             self::$headTop .
@@ -47,7 +60,7 @@ class GoogleAnalyticsV4TrackingProvider
                     window.dataLayer = window.dataLayer || [];
                   function gtag(){dataLayer.push(arguments);}
                   gtag('js', new Date());
-                  gtag('config', '" . $trackingId. "');
+                  gtag('config', '" . $trackingId . "');
                   
                 </script>
             ";
@@ -56,10 +69,15 @@ class GoogleAnalyticsV4TrackingProvider
     /**
      * @return string
      */
-    public static function headBottom()
+    public static function headBottom($brand = null)
     {
-        self::$headBottom .= session(self::SESSION_PREFIX . 'headBottom', '');
-        session([self::SESSION_PREFIX . 'headBottom' => '']);
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
+        self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.headBottom', '');
+
+        session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
         return
             self::$headBottom . " ";
@@ -81,9 +99,7 @@ class GoogleAnalyticsV4TrackingProvider
         $value,
         $quantity,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                 <script>
@@ -113,8 +129,7 @@ class GoogleAnalyticsV4TrackingProvider
         $name,
         $category,
         $currency = 'USD'
-    )
-    {
+    ) {
         self::$headBottom .=
             "    
                 <script>
@@ -132,7 +147,6 @@ class GoogleAnalyticsV4TrackingProvider
     }
 
 
-
     /**
      * @param $id
      * @param $name
@@ -146,9 +160,7 @@ class GoogleAnalyticsV4TrackingProvider
         $category,
         $value,
         $currency = 'USD'
-    )
-    {
-
+    ) {
         self::$headBottom .=
             "
                  <script>
@@ -185,8 +197,7 @@ class GoogleAnalyticsV4TrackingProvider
         $paymentType = null,
         $promoCode = '',
         $currency = 'USD'
-    )
-    {
+    ) {
         $output =
             "
                 <script>
@@ -234,11 +245,10 @@ class GoogleAnalyticsV4TrackingProvider
      */
     public static function trackInitiateCheckout(
         array $products,
-              $step,
-              $value,
-              $currency = 'USD'
+        $step,
+        $value,
+        $currency = 'USD'
     ) {
-
         $output =
             "
                 <script>

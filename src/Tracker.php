@@ -3,6 +3,8 @@
 namespace Railroad\Railanalytics;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
+use Railroad\Railanalytics\TrackingProviders\GetBrandFromDomain;
 use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
 
 /**
@@ -28,11 +30,35 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  */
 class Tracker
 {
-    public static function queue(callable $function)
+    use GetBrandFromDomain;
+
+    public static $brandOverride = null;
+
+    public static function queue($brand, callable $function)
     {
+        self::$brandOverride = $brand;
+
         $function();
 
-        self::__callStatic('queue', []);
+        self::__callStatic('queue', [$brand]);
+
+        self::$brandOverride = null;
+    }
+
+    public static function getQueueForBrand($brand): array
+    {
+        self::$brandOverride = $brand;
+
+        $queueData = [
+            'headTop' => self::headTop($brand),
+            'headBottom' => self::headBottom($brand),
+            'bodyTop' => self::bodyTop($brand),
+            'bodyBottom' => self::bodyBottom($brand),
+        ];
+
+        self::$brandOverride = null;
+
+        return $queueData;
     }
 
     /**
@@ -43,16 +69,24 @@ class Tracker
      */
     public static function __callStatic($name, $arguments)
     {
+        $brand = self::$brandOverride;
+
+        if (empty($brand)) {
+            $brand = self::getBrandFromDomain();
+        }
+
         $environment = (in_array(env('APP_ENV'), ['local', 'beta-testing', 'production'])) ? env('APP_ENV') : 'beta-testing';
         $providerNames = config(
-            'railanalytics.' . $environment . '.active-tracking-providers'
+            'railanalytics.' . $brand . '.' . $environment . '.active-tracking-providers'
         );
 
         if (!is_array($providerNames)) {
-            throw new Exception(
+            Log::error(
                 'Railanalytics is not configured properly, ' .
                 'you must set a tracking provider group name.'
             );
+
+            return '';
         }
 
         /**
