@@ -40,7 +40,7 @@ class ImpactTrackingProvider
             [
                 self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
                 self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom,
-                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$headBottom,
+                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$bodyTop,
             ]
         );
 
