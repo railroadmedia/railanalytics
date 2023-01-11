@@ -14,7 +14,7 @@ class BlankTrackingPageController
         $cacheTrackingData = [];
 
         if (!empty($cacheKey)) {
-            $cacheTrackingData = cache()->get($cacheKey);
+            $cacheTrackingData = cache('redis')->get($cacheKey);
 
 //            cache()->delete($cacheKey); // todo:
 
