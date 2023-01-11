@@ -5,10 +5,14 @@
 
     @php
         $cacheKey = 'none';
+            \Illuminate\Support\Facades\Log::info('--- $cacheKeyIframe: ' . $cacheKey);
 
         if (!empty(request()->get('cache_key'))) {
             $cacheKey = request()->get('cache_key');
+            \Illuminate\Support\Facades\Log::info('--- inIframeData: ' . var_export(cache()->get($cacheKey), true));
         }
+
+
     @endphp
 
     @if(cache()->has($cacheKey))
