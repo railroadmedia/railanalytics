@@ -9,6 +9,8 @@
 
         if (!empty(request()->get('cache_key'))) {
             $cacheKey = request()->get('cache_key');
+            \Illuminate\Support\Facades\Log::info('--- Iframe:cache_key: ' . $cacheKey);
+
             \Illuminate\Support\Facades\Log::info('--- inIframeData: ' . var_export(cache()->get($cacheKey), true));
         }
 
