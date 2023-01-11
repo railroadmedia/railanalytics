@@ -3,22 +3,8 @@
 <html lang="en">
 <head>
 
-    @php
-        $cacheKey = 'none';
-            \Illuminate\Support\Facades\Log::info('--- $cacheKeyIframe: ' . $cacheKey);
-
-        if (!empty(request()->get('cache_key'))) {
-            $cacheKey = request()->get('cache_key');
-            \Illuminate\Support\Facades\Log::info('--- Iframe:cache_key: ' . $cacheKey);
-
-            \Illuminate\Support\Facades\Log::info('--- inIframeData: ' . var_export(cache()->get($cacheKey), true));
-        }
-
-
-    @endphp
-
-    @if(cache()->has($cacheKey))
-        {!! cache()->get($cacheKey)['headTop'] ?? '' !!}
+    @if(!empty($cacheKey))
+        {!! $cacheTrackingData['headTop'] ?? '' !!}
     @else
         {!! \Railroad\Railanalytics\Tracker::headTop() !!}
     @endif
@@ -30,8 +16,8 @@
     <meta name="description" content="Musora Tracking Page">
     <meta name="author" content="Musora Media Inc">
 
-    @if(cache()->has($cacheKey))
-        {!! cache()->get($cacheKey)['headBottom'] ?? '' !!}
+    @if(!empty($cacheKey))
+        {!! $cacheTrackingData['headBottom'] ?? '' !!}
     @else
         {!! \Railroad\Railanalytics\Tracker::headBottom() !!}
     @endif
@@ -40,23 +26,17 @@
 
 <body>
 
-@if(cache()->has($cacheKey))
-    {!! cache()->get($cacheKey)['bodyTop'] ?? '' !!}
+@if(!empty($cacheKey))
+    {!! $cacheTrackingData['bodyTop'] ?? '' !!}
 @else
     {!! \Railroad\Railanalytics\Tracker::bodyTop() !!}
 @endif
 
-@if(cache()->has($cacheKey))
-    {!! cache()->get($cacheKey)['bodyBottom'] ?? '' !!}
+@if(!empty($cacheKey))
+    {!! $cacheTrackingData['bodyBottom'] ?? '' !!}
 @else
     {!! \Railroad\Railanalytics\Tracker::bodyBottom() !!}
 @endif
-
-@php
-    if (cache()->has($cacheKey)) {
-//        cache()->delete($cacheKey);
-    }
-@endphp
 
 </body>
 </html>

@@ -10,6 +10,18 @@ class BlankTrackingPageController
      */
     public function show()
     {
-        return view('railanalytics::blank-tracking-page');
+        $cacheKey = request()->get('cache_key');
+        $cacheTrackingData = [];
+
+        if (!empty($cacheKey)) {
+            $cacheTrackingData = cache()->get($cacheKey);
+
+//            cache()->delete($cacheKey); // todo:
+
+            \Illuminate\Support\Facades\Log::info('--- FUNC: $cacheKey: ' . $cacheKey);
+            \Illuminate\Support\Facades\Log::info('--- FUNC: $cacheTrackingData: ' . var_export($cacheTrackingData, true));
+        }
+
+        return view('railanalytics::blank-tracking-page', ['cacheKey' => $cacheKey, 'cacheTrackingData' => $cacheTrackingData]);
     }
 }
