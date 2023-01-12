@@ -2,6 +2,9 @@
 
 namespace Railroad\Railanalytics\Controllers;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+
 class BlankTrackingPageController
 {
     /**
@@ -14,9 +17,12 @@ class BlankTrackingPageController
         $cacheTrackingData = [];
 
         if (!empty($cacheKey)) {
-            $cacheTrackingData = cache()->store('redis')->get($cacheKey);
+            Log::info('BlankTrackingPageController show $cacheKey: ' . $cacheKey);
 
-            cache()->store('redis')->forget($cacheKey);
+            $cacheTrackingData = Cache::store('redis')->get($cacheKey);
+            Log::info('BlankTrackingPageController show $cacheTrackingData: ' . var_export($cacheTrackingData, true));
+
+            Cache::store('redis')->forget($cacheKey);
         }
 
         return view('railanalytics::blank-tracking-page', ['cacheKey' => $cacheKey, 'cacheTrackingData' => $cacheTrackingData]);
