@@ -14,9 +14,9 @@ class BlankTrackingPageController
         $cacheTrackingData = [];
 
         if (!empty($cacheKey)) {
-            $cacheTrackingData = cache('cache')->get($cacheKey);
+            $cacheTrackingData = cache()->store('redis')->get($cacheKey);
 
-//            cache('cache')->forget($cacheKey); // todo:
+//            cache()->store('redis')->forget($cacheKey); // todo:
 
             \Illuminate\Support\Facades\Log::info('--- FUNC: $cacheKey: ' . $cacheKey);
             \Illuminate\Support\Facades\Log::info('--- FUNC: $cacheTrackingData: ' . var_export($cacheTrackingData, true));
