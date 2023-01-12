@@ -16,10 +16,7 @@ class BlankTrackingPageController
         if (!empty($cacheKey)) {
             $cacheTrackingData = cache()->store('redis')->get($cacheKey);
 
-//            cache()->store('redis')->forget($cacheKey); // todo:
-
-            \Illuminate\Support\Facades\Log::info('--- FUNC: $cacheKey: ' . $cacheKey);
-            \Illuminate\Support\Facades\Log::info('--- FUNC: $cacheTrackingData: ' . var_export($cacheTrackingData, true));
+            cache()->store('redis')->forget($cacheKey);
         }
 
         return view('railanalytics::blank-tracking-page', ['cacheKey' => $cacheKey, 'cacheTrackingData' => $cacheTrackingData]);
