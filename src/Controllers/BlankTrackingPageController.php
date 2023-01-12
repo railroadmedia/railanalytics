@@ -20,11 +20,16 @@ class BlankTrackingPageController
             Log::info('BlankTrackingPageController show $cacheKey: ' . $cacheKey);
 
             $cacheTrackingData = Cache::store('redis')->get($cacheKey);
-            $store = Cache::store('redis');
+
+            var_dump($cacheKey);
+            var_dump($cacheTrackingData);
 
             Log::info('Cache Prefix railanalytics: ' . $this->getProtectedValue($this->getProtectedValue(Cache::store('redis'), 'store'), 'prefix'));
 
+            var_dump($this->getProtectedValue($this->getProtectedValue(Cache::store('redis'), 'store'), 'prefix'));
+
             Log::info('BlankTrackingPageController show $cacheTrackingData: ' . var_export($cacheTrackingData, true));
+
 
 //            Cache::store('redis')->forget($cacheKey);
         }
