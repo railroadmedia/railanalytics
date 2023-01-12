@@ -24,6 +24,10 @@ class GoogleAnalyticsTrackingProvider
             ]
         );
 
+        self::clear();
+    }
+
+    public static function clear() {
         self::$headTop = '';
         self::$headBottom = '';
     }

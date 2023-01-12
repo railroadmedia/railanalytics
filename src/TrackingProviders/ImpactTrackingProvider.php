@@ -45,6 +45,10 @@ class ImpactTrackingProvider
             ]
         );
 
+        self::clear();
+    }
+
+    public static function clear() {
         self::$headTop = '';
         self::$bodyTop = '';
         self::$headBottom = '';
