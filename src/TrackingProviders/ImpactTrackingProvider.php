@@ -4,7 +4,6 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Railroad\Railanalytics\Tracker;
 
 class ImpactTrackingProvider
