@@ -4,7 +4,6 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Railroad\Railanalytics\Tracker;
 
 class ImpactTrackingProvider
@@ -33,19 +32,9 @@ class ImpactTrackingProvider
 
     public static function queue($brand = null)
     {
-        Log::info('IM Tracker queue $brand' . $brand);
-
         if (empty($brand)) {
             $brand = self::getBrandFromDomain();
         }
-
-        Log::info(
-            'IM Tracker queue data' . var_export([
-                self::SESSION_PREFIX . $brand . '.headTop' => self::$headTop,
-                self::SESSION_PREFIX . $brand . '.headBottom' => self::$headBottom,
-                self::SESSION_PREFIX . $brand . '.bodyTop' => self::$bodyTop,
-            ], true)
-        );
 
         session(
             [
@@ -55,6 +44,10 @@ class ImpactTrackingProvider
             ]
         );
 
+        self::clear();
+    }
+
+    public static function clear() {
         self::$headTop = '';
         self::$bodyTop = '';
         self::$headBottom = '';
@@ -65,17 +58,11 @@ class ImpactTrackingProvider
      */
     public static function headTop($brand = null)
     {
-        Log::info('IM Tracker headTop $brand' . $brand);
-
         if (empty($brand)) {
             $brand = self::getBrandFromDomain();
         }
 
         self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
-
-        Log::info(
-            'IM Tracker headTop self::$headTop' . self::$headTop
-        );
 
         session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
 
@@ -105,17 +92,11 @@ class ImpactTrackingProvider
      */
     public static function headBottom($brand = null)
     {
-        Log::info('IM Tracker headBottom $brand' . $brand);
-
         if (empty($brand)) {
             $brand = self::getBrandFromDomain();
         }
 
         self::$headBottom .= session(self::SESSION_PREFIX . $brand . '.headBottom', '');
-
-        Log::info(
-            'IM Tracker headTop self::$headBottom' . self::$headBottom
-        );
 
         session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
@@ -128,17 +109,11 @@ class ImpactTrackingProvider
      */
     public static function bodyTop($brand = null)
     {
-        Log::info('IM Tracker bodyTop $brand' . $brand);
-
         if (empty($brand)) {
             $brand = self::getBrandFromDomain();
         }
 
         self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
-
-        Log::info(
-            'IM Tracker headTop self::$bodyTop' . self::$bodyTop
-        );
 
         session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
 
@@ -170,8 +145,6 @@ class ImpactTrackingProvider
         $currency = 'USD'
     ) {
         $brand = Tracker::$brandOverride;
-
-        Log::info('IM Tracker trackTransaction $brand' . $brand);
 
         if (empty($brand)) {
             $brand = self::getBrandFromDomain();

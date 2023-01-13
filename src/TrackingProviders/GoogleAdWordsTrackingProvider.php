@@ -24,6 +24,10 @@ class GoogleAdWordsTrackingProvider
             ]
         );
 
+        self::clear();
+    }
+
+    public static function clear() {
         self::$bodyTop = '';
     }
 

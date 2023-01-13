@@ -24,6 +24,10 @@ class GoogleTagManagerTrackingProvider
             ]
         );
 
+        self::clear();
+    }
+
+    public static function clear() {
         self::$headTop = '';
         self::$bodyTop = '';
     }

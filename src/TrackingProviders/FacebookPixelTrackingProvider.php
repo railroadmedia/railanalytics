@@ -24,6 +24,10 @@ class FacebookPixelTrackingProvider
             ]
         );
 
+        self::clear();
+    }
+
+    public static function clear() {
         self::$headBottom = '';
         self::$bodyTop = '';
     }

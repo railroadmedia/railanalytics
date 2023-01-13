@@ -16,6 +16,7 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string headBottom()
  * @method static string bodyTop()
  * @method static string bodyBottom()
+ * @method static string clear()
  *
  * @method static string trackPageView()
  * @method static string trackProductImpression($id, $name, $category, $currency = null)
@@ -55,6 +56,8 @@ class Tracker
             'bodyTop' => self::bodyTop($brand),
             'bodyBottom' => self::bodyBottom($brand),
         ];
+
+        self::clear();
 
         self::$brandOverride = null;
 
