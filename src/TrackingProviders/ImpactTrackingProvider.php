@@ -104,27 +104,6 @@ class ImpactTrackingProvider
             self::$headBottom . " ";
     }
 
-    /**
-     * @return string
-     */
-    public static function bodyTop($brand = null)
-    {
-        if (empty($brand)) {
-            $brand = self::getBrandFromDomain();
-        }
-
-        self::$bodyTop .= session(self::SESSION_PREFIX . $brand . '.bodyTop', '');
-
-        session([self::SESSION_PREFIX . $brand . '.bodyTop' => '']);
-
-        return
-            "
-                <script type='text/javascript'>
-                    ire('identify', {customerId: '" . self::$customerId . "', customerEmail: '" . self::$customerEmail . "'});
-                </script>
-            "
-            . self::$bodyTop;
-    }
 
     /**
      * @param array $products
