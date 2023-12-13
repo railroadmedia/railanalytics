@@ -56,40 +56,6 @@ class ImpactTrackingProvider
     /**
      * @return string
      */
-    public static function headTop($brand = null)
-    {
-        if (empty($brand)) {
-            $brand = self::getBrandFromDomain();
-        }
-
-        self::$headTop .= session(self::SESSION_PREFIX . $brand . '.headTop', '');
-
-        session([self::SESSION_PREFIX . $brand . '.headTop' => '']);
-
-        $uttLink = config(
-            'railanalytics.' . $brand . '.' . env('APP_ENV') .
-            '.providers.impact.utt-link'
-        );
-
-        if (empty($uttLink)) {
-            return '';
-        }
-
-        return
-            self::$headTop .
-            "
-                <!-- Impact Analytics -->
-                <script type='text/javascript'>
-                    (function(a,b,c,d,e,f,g){e['ire_o']=c;e[c]=e[c]||function(){(e[c].a=e[c].a||[]).push(arguments)};
-                        f=d.createElement(b);g=d.getElementsByTagName(b)[0];f.async=1;f.src=a;g.parentNode.insertBefore(f,g);})
-                    ('https://utt.impactcdn.com/" . $uttLink . ".js','script','ire',document,window); 
-                </script>
-            ";
-    }
-
-    /**
-     * @return string
-     */
     public static function headBottom($brand = null)
     {
         if (empty($brand)) {
