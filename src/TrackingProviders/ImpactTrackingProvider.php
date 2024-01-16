@@ -150,7 +150,9 @@ class ImpactTrackingProvider
         array $products,
         $transactionId,
         $promoCode,
-        $currency = 'USD'
+        $userID,
+        $email,
+        $currency = 'USD',
     ) {
         $brand = Tracker::$brandOverride;
 
@@ -175,10 +177,9 @@ class ImpactTrackingProvider
             '.providers.impact.campaign-id'
         );
 
-
         $url = "https://" . $sid . ":" . $authToken . "@api.impact.com/Advertisers/" . $sid . "/Conversions?" .
             "CampaignId=" . $campaignId . "&ActionTrackerId=" . $apiActionTrackerId . "&EventDate=" . $now .
-            "&OrderId=" . $transactionId . "&CustomerId=" . self::$customerId . "&CustomerEmail=C" . self::$customerEmail .
+            "&OrderId=" . $transactionId . "&CustomerId=" . $userID . "&CustomerEmail=C" . $email .
             "&OrderPromoCode=" . $promoCode . "&CurrencyCode=" . $currency;
 
         foreach ($products as $index => $product) {
