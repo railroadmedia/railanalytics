@@ -148,18 +148,13 @@ class ImpactTrackingProvider
 
     public static function trackTransactionAPI(
         array $products,
+        $brand,
         $transactionId,
         $promoCode,
         $userID,
         $email,
         $currency = 'USD',
     ) {
-        $brand = Tracker::$brandOverride;
-
-        if (empty($brand)) {
-            $brand = self::getBrandFromDomain();
-        }
-
         $now = date("Y-m-d") . "T" . date("H:i:s");
 
         $sid = config('railanalytics.' . $brand . '.' . env('APP_ENV') .
