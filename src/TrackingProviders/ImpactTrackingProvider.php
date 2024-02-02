@@ -171,10 +171,11 @@ class ImpactTrackingProvider
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.campaign-id'
         );
+        $hashedEmail = md5($email);
 
         $url = "https://" . $sid . ":" . $authToken . "@api.impact.com/Advertisers/" . $sid . "/Conversions?" .
             "CampaignId=" . $campaignId . "&ActionTrackerId=" . $apiActionTrackerId . "&EventDate=" . $now .
-            "&OrderId=" . $transactionId . "&CustomerId=" . $userID . "&CustomerEmail=C" . $email .
+            "&OrderId=" . $transactionId . "&CustomerId=" . $userID . "&CustomerEmail=C" . $hashedEmail .
             "&OrderPromoCode=" . $promoCode . "&CurrencyCode=" . $currency;
 
         foreach ($products as $index => $product) {
