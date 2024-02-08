@@ -4,6 +4,7 @@ namespace Railroad\Railanalytics\TrackingProviders;
 
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Railroad\Railanalytics\Tracker;
 
 class ImpactTrackingProvider
@@ -153,6 +154,7 @@ class ImpactTrackingProvider
         $userID,
         $email,
         $currency = 'USD',
+        $affiliateClickCode = null
     ) {
         $brand = Tracker::$brandOverride;
 
@@ -176,11 +178,15 @@ class ImpactTrackingProvider
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.campaign-id'
         );
-
+        $hashedEmail = md5($email);
         $url = "https://" . $sid . ":" . $authToken . "@api.impact.com/Advertisers/" . $sid . "/Conversions?" .
             "CampaignId=" . $campaignId . "&ActionTrackerId=" . $apiActionTrackerId . "&EventDate=" . $now .
-            "&OrderId=" . $transactionId . "&CustomerId=" . $userID . "&CustomerEmail=C" . $email .
+            "&OrderId=" . $transactionId . "&CustomerId=" . $userID . "&CustomerEmail=C" . $hashedEmail .
             "&OrderPromoCode=" . $promoCode . "&CurrencyCode=" . $currency;
+
+        if (!empty($affiliateClickCode)) {
+            $url .= "&ClickId=" . $affiliateClickCode;
+        }
 
         foreach ($products as $index => $product) {
             $i = $index + 1;
@@ -188,8 +194,9 @@ class ImpactTrackingProvider
                 $product['sku'] . "&ItemSubtotal" . $i . "=" . $product['value'] . "&ItemQuantity" . $i . "=" . $product['quantity'];
         }
 
-        $url = str_replace(" ", '%20', $url);
+        Log::info("Impact Track Purchase url: $url");
 
+        $url = str_replace(" ", '%20', $url);
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
