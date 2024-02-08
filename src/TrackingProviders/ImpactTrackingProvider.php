@@ -153,6 +153,7 @@ class ImpactTrackingProvider
         $userID,
         $email,
         $currency = 'USD',
+        affiliateClickCode = null
     ) {
         $brand = Tracker::$brandOverride;
 
@@ -182,14 +183,19 @@ class ImpactTrackingProvider
             "&OrderId=" . $transactionId . "&CustomerId=" . $userID . "&CustomerEmail=C" . $email .
             "&OrderPromoCode=" . $promoCode . "&CurrencyCode=" . $currency;
 
+        if (!empty($affiliateClickCode)) {
+            $url .= "&ClickId=" . $affiliateClickCode;
+        }
+
         foreach ($products as $index => $product) {
             $i = $index + 1;
             $url .= "&ItemCategory" . $i . "=" . $product['category'] . "&ItemSku" . $i . "=" .
                 $product['sku'] . "&ItemSubtotal" . $i . "=" . $product['value'] . "&ItemQuantity" . $i . "=" . $product['quantity'];
         }
 
-        $url = str_replace(" ", '%20', $url);
+        Log::info("Impact Track Purchase url: $url");
 
+        $url = str_replace(" ", '%20', $url);
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
