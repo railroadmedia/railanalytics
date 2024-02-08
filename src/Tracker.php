@@ -26,7 +26,7 @@ use Railroad\Railanalytics\TrackingProviders\TrackingProviderFactory;
  * @method static string trackAddPaymentInformation()
  * @method static string trackTransaction(array $products, $transactionId, $revenue, $tax, $shipping, $paymentType, $promoCode, $currency = 'USD')
  * @method static string trackLead($value = null, $currency = 'USD')
- * @method static string trackTransactionAPI(array $products, $transactionId, $promoCode, $userID, $email, $currency = 'USD', affiliateClickCode=null)
+ * @method static string trackTransactionAPI(array $products, $transactionId, $promoCode, $userID, $email, $currency = 'USD', $affiliateClickCode=null)
 
  */
 class Tracker

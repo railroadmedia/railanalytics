@@ -153,7 +153,7 @@ class ImpactTrackingProvider
         $userID,
         $email,
         $currency = 'USD',
-        affiliateClickCode = null
+        $affiliateClickCode = null
     ) {
         $brand = Tracker::$brandOverride;
 
