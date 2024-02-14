@@ -71,82 +71,6 @@ class ImpactTrackingProvider
             self::$headBottom . " ";
     }
 
-
-    /**
-     * @param array $products
-     * @param $transactionId
-     * @param $revenue
-     * @param $tax
-     * @param $shipping
-     * @param string $currency
-     */
-    public static function trackTransaction(
-        array $products,
-        $transactionId,
-        $revenue,
-        $tax,
-        $shipping,
-        $paymentType = '',
-        $promoCode = '',
-        $currency = 'USD'
-    ) {
-        $brand = Tracker::$brandOverride;
-
-        if (empty($brand)) {
-            $brand = self::getBrandFromDomain();
-        }
-
-        $tagActionTrackerId = config(
-            'railanalytics.' . $brand . '.' . env('APP_ENV') .
-            '.providers.impact.tag-action-tracker-id'
-        );
-
-        if (empty($tagActionTrackerId)) {
-            return '';
-        }
-
-        $status = "";
-        if ($paymentType == "initial_order") {
-            $status = "New";
-        } elseif ($paymentType == "subscription_renewal") {
-            $status = "Returning";
-        }
-
-        $jsonProductsArray = [];
-        foreach ($products as $product) {
-            $jsonProductsArray[] = "
-                            {
-                                subTotal: " . $product['quantity'] * $product['value'] . ",
-                                category: \"" . $product['category'] . "\",
-                                sku: \"" . $product['sku'] . "\",
-                                quantity: " . $product['quantity'] . ",
-                                name: \"" . $product['name'] . "\",
-                            },";
-        }
-        $output =
-            "
-                <script type='text/javascript'>
-                    ire('trackConversion', $tagActionTrackerId, {
-                        orderId: '" . $transactionId . "',
-                        customerId: '" . self::$customerId . "',
-                        customerEmail: '" . self::$customerEmail . "',
-                        customerStatus: '" . $status . "',
-                        currencyCode: '" . $currency . "',
-                        orderPromoCode: '" . $promoCode . "',
-                        items: [";
-        $output .= implode(" ", $jsonProductsArray);
-        $output .=
-            "
-                        ],
-                    });
-            " .
-            "
-                </script>
-            ";
-
-        self::$headBottom .= $output;
-    }
-
     public static function trackTransactionAPI(
         array $products,
         $transactionId,
@@ -170,9 +94,11 @@ class ImpactTrackingProvider
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.impact.auth-token'
         );
+        $hasTrial = array_filter($products, function($product) { return $product['category'] == 'TrialStart';}) ;
+        $tagName = $hasTrial ? 'tag-action-tracker-id' : 'api-action-tracker-id';
         $apiActionTrackerId = config(
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
-            '.providers.impact.api-action-tracker-id'
+            '.providers.impact.' . $tagName
         );
         $campaignId = config(
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
