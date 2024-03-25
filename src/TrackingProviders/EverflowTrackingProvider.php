@@ -94,7 +94,8 @@ class EverflowTrackingProvider
             $parametersString = print_r($parameters, true);
             Log::warning("Everflow Tracking returned $status with contents $msg");
             Log::warning("Data sent: $baseURL with packet $parametersString ");
-
+        } else {
+            Log::info("Everflow api returned 200 for order $id for $email");
         }
     }
 
