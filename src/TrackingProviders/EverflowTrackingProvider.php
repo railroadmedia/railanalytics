@@ -2,9 +2,9 @@
 
 namespace Railroad\Railanalytics\TrackingProviders;
 
-use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 use Railroad\Railanalytics\Tracker;
 
 class EverflowTrackingProvider
@@ -77,34 +77,25 @@ class EverflowTrackingProvider
             '.providers.everflow.nid'
         );
 
-        $url = "https://" . $baseURL . "/?nid" . $nid . "&adv_event_id=" . $eventID . "&verification_token=" .
-            $verificationToken . '&timestamp=' . $timestamp . '&email=' . $email .
-            '&aid=' . $brandID . '&order_id=' . $id;
+        $parameters = [
+            'nid' => $nid,
+            'adv_event_id' => $eventID,
+            'verification_token' => $verificationToken,
+            'timestamp' => $timestamp,
+            'email' => $email,
+            'aid' => $brandID,
+            'order_id' => $id
+        ];
 
+        $response = Http::post($baseURL, $parameters);
+        if ($response->status() != 200) {
+            $msg = print_r($response->body(), true);
+            $status = $response->status();
+            $parametersString = print_r($parameters, true);
+            Log::warning("Everflow Tracking returned $status with contents $msg");
+            Log::warning("Data sent: $baseURL with packet $parametersString ");
 
-        Log::info("Everflow Track Conversion url: $url");
-
-        $url = str_replace(" ", '%20', $url);
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($curl, CURLOPT_TIMEOUT, 15);
-
-        $headers = [];
-        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-        $headers[] = 'Content-Length: 0';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-        $response = curl_exec($curl);
-
-        if (curl_errno($curl)) {
-            throw new Exception(
-                'Error in Impact tracking conversion api function from railanalytics: ' . curl_error($curl)
-            );
         }
-
-        curl_close($curl);
     }
 
 }
