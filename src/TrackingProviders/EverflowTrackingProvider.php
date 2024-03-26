@@ -59,6 +59,10 @@ class EverflowTrackingProvider
         }
         $baseURL = config('railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.everflow.base_link');
+        if (!$baseURL) {
+            Log::info("No Everflow url configured for tracking; returning without sending");
+            return;
+        }
         $verificationToken = config(
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.everflow.verification_token'
@@ -86,7 +90,6 @@ class EverflowTrackingProvider
             'aid' => $brandID,
             'order_id' => $id
         ];
-
         $response = Http::post($baseURL, $parameters);
         if ($response->status() != 200) {
             $msg = print_r($response->body(), true);
