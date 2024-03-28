@@ -90,7 +90,7 @@ class EverflowTrackingProvider
             'aid' => $brandID,
             'order_id' => $id
         ];
-        $response = Http::post($baseURL, $parameters);
+        $response = Http::get($baseURL, $parameters);
         if ($response->status() != 200) {
             $msg = print_r($response->body(), true);
             $status = $response->status();
