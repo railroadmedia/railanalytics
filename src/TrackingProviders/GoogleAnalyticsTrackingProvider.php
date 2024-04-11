@@ -110,6 +110,15 @@ class GoogleAnalyticsTrackingProvider
 
         session([self::SESSION_PREFIX . $brand . '.headBottom' => '']);
 
+        $trackingId = config(
+            'railanalytics.' . $brand . '.' . env('APP_ENV') .
+            '.providers.google-analytics.tracking-id'
+        );
+        
+        if (empty($trackingId)) {
+            return '';
+        }
+
         return
             self::$headBottom .
             "

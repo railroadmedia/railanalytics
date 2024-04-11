@@ -29,6 +29,8 @@ class TrackingProviderFactory
             case 'impact':
             case 'im':
                 return app(ImpactTrackingProvider::class);
+            case 'ef':
+                return app(EverflowTrackingProvider::class);
             default:
                 return null;
         }
