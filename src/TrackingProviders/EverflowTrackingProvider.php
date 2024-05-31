@@ -17,6 +17,8 @@ class EverflowTrackingProvider
     protected static $headBottom = '';
     protected static $bodyTop = '';
 
+
+
     /**
      * EverflowTrackingProvider constructor.
      *
@@ -50,8 +52,13 @@ class EverflowTrackingProvider
     public static function trackEverFlowConversionAPI(
         $id,
         $email,
-        $timestamp
+        $timestamp,
+        $amount,
+        $currency,
+        $isTrialConversion,
     ) {
+
+
         $brand = Tracker::$brandOverride;
 
         if (empty($brand)) {
@@ -71,10 +78,6 @@ class EverflowTrackingProvider
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
             '.providers.everflow.brand_id'
         );
-        $eventID = config(
-            'railanalytics.' . $brand . '.' . env('APP_ENV') .
-            '.providers.everflow.conversion_event_id'
-        );
 
         $nid = config(
             'railanalytics.' . $brand . '.' . env('APP_ENV') .
@@ -83,22 +86,35 @@ class EverflowTrackingProvider
 
         $parameters = [
             'nid' => $nid,
-            'adv_event_id' => $eventID,
             'verification_token' => $verificationToken,
             'timestamp' => $timestamp,
             'email' => $email,
             'aid' => $brandID,
-            'order_id' => $id
+            'order_id' => $id,
+            'amount' => $amount,
+            'currency' => $currency
         ];
+
+        if (!$isTrialConversion) {
+            $eventID = config(
+                'railanalytics.' . $brand . '.' . env('APP_ENV') .
+                '.providers.everflow.purchase_event_id'
+            );
+        } else {
+            $eventID = config(
+                'railanalytics.' . $brand . '.' . env('APP_ENV') .
+                '.providers.everflow.conversion_event_id'
+            );
+        }
+
+        $parameters['adv_event_id'] = $eventID;
         $response = Http::get($baseURL, $parameters);
         if ($response->status() != 200) {
             $msg = print_r($response->body(), true);
             $status = $response->status();
             $parametersString = print_r($parameters, true);
-            Log::warning("Everflow Tracking returned $status with contents $msg");
-            Log::warning("Data sent: $baseURL with packet $parametersString ");
-        } else {
-            Log::info("Everflow api returned 200 for order $id for $email");
+            Log::warning("Everflow Tracking Returned $status with contents $msg");
+            Log::warning("Everflow Tracking Data sent: $baseURL with packet $parametersString ");
         }
     }
 
